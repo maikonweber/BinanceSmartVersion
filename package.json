@@ -1,0 +1,28 @@
+{
+  "name": "binancesmarttrade",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "run": "node -r dotenv/config candles.js",
+    "dev": "electron . dotenv/config",
+    "start": "node -r dotenv/config run.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@material-ui/icons": "^4.11.2",
+    "axios": "^0.24.0",
+    "d3": "^7.2.0",
+    "dotenv": "^10.0.0",
+    "fib-retracement": "^0.0.4",
+    "moment": "^2.29.1",
+    "technicalindicators": "^3.1.0",
+    "tulind": "^0.8.20",
+    "ws": "^8.4.0"
+  },
+  "devDependencies": {
+    "electron": "^16.0.3"
+  }
+}

@@ -26,7 +26,6 @@ class Robot {
         this.suporte100= 0;
         this.suporte500 = 0;
         this.resistencia = 0;
-      
         this.resistencia5 = 0;
         this.resistencia10 = 0;
         this.resistencia100 = 0;
@@ -47,7 +46,7 @@ class Robot {
         this.currentRSI = 0;
         // Relação entre deph e Suporte
         this.deph2Sup = 0;
-        
+        this.currentTarget = 0;
         this.operationPeriodo = 24;
         // Array com ultimos 14 valores de RSI
         this.mediaRSI = [];
@@ -56,6 +55,7 @@ class Robot {
         this.lastRSI = 0;
         this.resultofOrder = [];	
         this.resultTotal = 0
+        this.resultOfSellOder = [];
 
 
     }
@@ -64,11 +64,12 @@ class Robot {
         this.statist();
         this.getSuporte();
         this.getTendecia();     
-        this.analictEntry();
+        
         this.getStrem(); 
         this.cheackRSI();
         this.writeResult();
         this.getResult();
+        this.analictEntry();
     }
 
     async statist() {
@@ -85,7 +86,7 @@ class Robot {
                 this.static.shift();
             }
 
-            }, 12000);
+            }, 8000);
 }
 
     async getSuporte() {
@@ -125,27 +126,9 @@ class Robot {
 }
     async analictEntry() {
         console.log(this.suporte , "Suporte");
-        setInterval( async () => {
-            if (this.havecurrency == false) {
-            if (this.currentValor < this.suporte && this.currentRSI < 44) {
-                this.getOrder();
-                this.havecurrency = true;
-            } else {	
-                console.log("O valor não esta no suporte");
-            }
-            } else {
-                this.setStopLoss();
-                if (this.currentValor > this.resistencia && this.currentRSI > 52 || this.currentValor > this.resistencia5 && this.lastRSI > 55 || this.currentRSI > 58) {
-                    this.getOrderSell();
-                    this.havecurrency = false;
-                }
-                else {
-                    console.log("O valor não esta no resistencia");
-                    this.getStopGain();
-                }
-            }
+       setInterval( async () => {
 
-        }, 35000);
+        }, 15000);
     }
 
     async getStrem() {
@@ -167,8 +150,6 @@ class Robot {
 
     async setStopLoss() {
         if(this.havecurrency == true) {
-
-            // take the last object o refult of order
             let lastOrder = this.resultofOrder[this.resultofOrder.length - 1];
             let lastOrderPrice = lastOrder.Buy
             let porcent = 0.0049;
@@ -205,10 +186,12 @@ class Robot {
         console.log('RSI');
         setInterval( async () => {
             this.lastRSI = this.lastStactis.RSI;
+            
             const rst = {
                 RSI: this.lastStactis.RSI,
                 time: this.lastStactis.time
             }
+
             this.mediaRSI.push(rst); 
             let media = 0;
             if (this.mediaRSI.length > 14) {
@@ -239,7 +222,7 @@ class Robot {
         let lastOrderPrice =  this.currentValor - lastOrder.Buy;
         this.resultTotal += lastOrderPrice;
 
-        this.resultofOrder.push({
+        this.resultofSellOrder.push({
             Buy: lastOrder.Buy,
             Sell : this.currentValor,
             RSI : this.currentRSI,

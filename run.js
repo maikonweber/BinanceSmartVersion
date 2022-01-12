@@ -105,7 +105,8 @@ class Robot {
             this.suporte500 = this.lastStactis.supAndRes500.Suporte;
             this.suporte = this.suporte1
 
-            console.log("Suporte Atualizados");
+            console.log("Suporte Atualizados", this.suporte1, this.suporte10, this.suporte100, this.suporte500);
+
 
             
             this.resistencia1= this.lastStactis.supAndRes5.Resistencia;
@@ -113,8 +114,10 @@ class Robot {
             this.resistencia10= this.lastStactis.supAndRes100.Resistencia;
             this.resistencia500 = this.lastStactis.supAndRes500.Resistencia;
             this.resistencia = this.resistencia1
+            
 
-            console.log("Resistencia Atualizados");
+            console.log("Resistencia Atualizados", this.resistencia, this.resistencia1, this.resistencia5, this.resistencia10, this.resistencia500);
+
 
 
         }, 60000);
@@ -134,12 +137,17 @@ class Robot {
     async analictEntry() {
         console.log(this.suporte , "Suporte");
         setInterval( async () => {
+            console.log("Analisando Entranda")
                 if (this.havecurrency =  false && this.haveorder == false) {
+                    console.log('Não tem moeda');
                     if (this.currentValor <= this.suporte && this.currentRSI < 42 ) {
                         this.getOrder();
                         console.log("Compra")
+                    } else {
+                        console.log("Não comprou porque não está no suporte");
                     }
                  } else if (this.havecurrency == true && this.haveorder == true) {
+                    console.log("Tem a Moeda")
                     this.getStopGain();
                     this.setStopLoss();
                     if (this.currentValor >= this.currentTarget && this.lastRSI > 52 || this.lastRSI > 60) {    
@@ -159,8 +167,16 @@ class Robot {
             console.log("\x1b[33m", this.resistencia, "\x1b[32m","Resistencia");
             console.log("\x1b[33m",this.currentValor,"\x1b[35m" ,"Valor Atual");
             console.log("\x1b[33m",this.currentTarget,"\x1b[36m" ,"RSI Atual");
-            console.log(this.resultofOrder);
-            console.log(this.resultOfSellOder);
+            console.log("\x1b[33m",this.lastRSI,"\x1b[36m" ,"Ultimo RSI");
+            console.log("\x1b[33m",this.lastRSImedia,"\x1b[36m" ,"Ultimo RSI media");
+            console.log("\x1b[33m",this.currentMediaRSI14,"\x1b[36m" ,"Media RSI 14");
+            console.log("\x1b[33m",this.tendencia,"\x1b[36m" ,"Tendencia");
+            console.log("\x1b[33m",this.havecurrency,"\x1b[36m" ,"Tem Moeda");
+            console.log("\x1b[33m",this.haveorder,"\x1b[36m" ,"Tem Ordem");
+            
+
+            console.table(this.resultofOrder);
+            console.table(this.resultOfSellOder);
             
 
            
@@ -168,7 +184,8 @@ class Robot {
     }
 
     async setStopLoss() {
-        if(this.havecurrency == true && this.haveorder == true) {            // take the last object o refult of order
+        if(this.havecurrency == true && this.haveorder == true) {
+            console.log("Verificando o Stop Loss")            // take the last object o refult of order
             let lastOrder = this.resultofOrder[this.resultofOrder.length - 1];
             let lastOrderPrice = lastOrder.Buy
             let porcent = 0.0052;
@@ -186,6 +203,7 @@ class Robot {
     async getStopGain() {
         if (this.havecurrency = true && this.haveorder == true) {
              // take the last object o refult of order
+             console.log("Verificando o Stop Gain")
              let lastOrder = this.resultofOrder[this.resultofOrder.length - 1];
              let lastOrderPrice = lastOrder.Buy
              let porcent = 0.0042;

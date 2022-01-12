@@ -153,7 +153,11 @@ class Robot {
                     if (this.currentValor >= this.currentTarget && this.lastRSI > 52 || this.lastRSI > 60) {    
                         this.getOrderSell();   
                         console.log('Venda')                 
+                    } else {
+                        console.log("Não vendeu porque não está no Resistencia");
                     }
+                } else {
+                    console.log("Existe divergencia em Ordem Ativas")
                 }
 
         }, 15000);

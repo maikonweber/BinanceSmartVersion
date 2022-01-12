@@ -18,6 +18,7 @@
     "dotenv": "^10.0.0",
     "fib-retracement": "^0.0.4",
     "moment": "^2.29.1",
+    "pg": "^8.7.1",
     "technicalindicators": "^3.1.0",
     "tulind": "^0.8.20",
     "ws": "^8.4.0"

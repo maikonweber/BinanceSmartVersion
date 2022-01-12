@@ -154,10 +154,9 @@ class Robot {
             console.log("\x1b[33m",this.suporte,"\x1b[31m" ,"Suporte");
             console.log("\x1b[33m", this.resistencia, "\x1b[32m","Resistencia");
             console.log("\x1b[33m",this.currentValor,"\x1b[35m" ,"Valor Atual");
-            console.log("\x1b[33m",this.currentMediaRSI14, "\x1b[34m","Media RSI");
-            console.log("\x1b[33m",this.lastRSI, "\x1b[34m","Ultimo RSI");
-            console.log("\x1b[33m",this.resistencia5, "\x1b[34m","Resistencia");
+            console.log("\x1b[33m",this.currentTarget,"\x1b[36m" ,"RSI Atual");
             console.log(this.resultofOrder);
+            console.log(this.resultOfSellOder);
             
 
            
@@ -233,7 +232,8 @@ class Robot {
             price: this.currentValor,
             stop: this.currentTarget,
             orderExec: "market",
-            Buy : this.currentValor
+            Buy : this.currentValor,
+            time: this.CurrentTime
             }
         
         this.resultofOrder.push(buyOrder);
@@ -242,11 +242,11 @@ class Robot {
     }
 
     async getOrderSell() {
-        let OCOper1 = this.resistencia * 0.0049;
-        let OCOstopGain = this.currentTarget + OCOstop;
+        let OCOper1 = this.currentTarget * 0.0049;
+        let OCOstopGain = this.currentTarget + OCOper1;
 
-        let OCOper2 = this.resistencia * 0.0030;
-        let OCOstopLoss = this.currentTarget - OCOstopLoss;
+        let OCOper2 = this.currentTarget * 0.0030;
+        let OCOstopLoss = this.currentTarget - OCOper2;
 
         let sellOrder = {
             pair: this.syngal,
@@ -256,7 +256,8 @@ class Robot {
             stop: this.currentTarget,
             OCOgain : OCOstopGain,
             OCOloss : OCOstopLoss,
-            orderExec : "market"
+            orderExec : "market",
+            time : this.CurrentTime
         }
 
         this.resulOfSellOrder.push(sellOrder);

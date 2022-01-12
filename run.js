@@ -93,7 +93,7 @@ class Robot {
                 this.static.shift();
             }
 
-            }, 8000);
+            }, 10000);
 }
 
     async getSuporte() {
@@ -138,8 +138,8 @@ class Robot {
                     if (this.currentValor < this.suporte && this.currentRSI < 42 && this.lastRSI < this.lastRSImedia) {
                         this.getOrder();
                     }
-                 } else if (this.havecurrency == true && this.haveorder == false) {
-                    if (this.currentValor > this.resistencia && this.lastRSI > 52 || this.lastRSI > 60) {    
+                 } else if (this.havecurrency == true && this.haveorder == true) {
+                    if (this.currentValor > this.currentTarget && this.lastRSI > 52 || this.lastRSI > 60) {    
                         this.getOrderSell();                    
                     }
                 }
@@ -232,7 +232,8 @@ class Robot {
             amount: this.amount,
             price: this.currentValor,
             stop: this.currentTarget,
-            orderExec: "market"
+            orderExec: "market",
+            Buy : this.currentValor
             }
         
         this.resultofOrder.push(buyOrder);

@@ -135,12 +135,16 @@ class Robot {
         console.log(this.suporte , "Suporte");
         setInterval( async () => {
                 if (this.havecurrency =  false && this.haveorder == false) {
-                    if (this.currentValor < this.suporte && this.currentRSI < 42 && this.lastRSI < this.lastRSImedia) {
+                    if (this.currentValor <= this.suporte && this.currentRSI < 42 ) {
                         this.getOrder();
+                        console.log("Compra")
                     }
                  } else if (this.havecurrency == true && this.haveorder == true) {
-                    if (this.currentValor > this.currentTarget && this.lastRSI > 52 || this.lastRSI > 60) {    
-                        this.getOrderSell();                    
+                    this.getStopGain();
+                    this.setStopLoss();
+                    if (this.currentValor >= this.currentTarget && this.lastRSI > 52 || this.lastRSI > 60) {    
+                        this.getOrderSell();   
+                        console.log('Venda')                 
                     }
                 }
 
@@ -164,7 +168,7 @@ class Robot {
     }
 
     async setStopLoss() {
-        if(this.havecurrency == true || this.haveorder == true) {            // take the last object o refult of order
+        if(this.havecurrency == true && this.haveorder == true) {            // take the last object o refult of order
             let lastOrder = this.resultofOrder[this.resultofOrder.length - 1];
             let lastOrderPrice = lastOrder.Buy
             let porcent = 0.0052;
@@ -180,7 +184,7 @@ class Robot {
     }
 
     async getStopGain() {
-        if (this.havecurrency = true || this.haveorder == true) {
+        if (this.havecurrency = true && this.haveorder == true) {
              // take the last object o refult of order
              let lastOrder = this.resultofOrder[this.resultofOrder.length - 1];
              let lastOrderPrice = lastOrder.Buy

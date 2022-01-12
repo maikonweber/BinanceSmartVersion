@@ -5,14 +5,15 @@ let { getMMA } = require('./candles.js');
 let { writeJson } = require('./writeJson.js');
 
 class Robot {
-    constructor(saldo, stopLoss, takeProfit, syngal, time, interval, saldoInicial) {
+    constructor(amout, stopLoss, takeProfit, syngal, time, interval, saldoInicial) {
         // Order information
         this.havecurrency = false
         this.haveorder = false
         // params
-        this.resistenciaMin  = 0
         this.CurrentTime = null;
-        this.saldo = saldo;
+
+        this.amount = amout;
+
         this.stopLoss = stopLoss;
         this.takeProfit = takeProfit;
         this.syngal = syngal;
@@ -20,7 +21,6 @@ class Robot {
         this.interval = interval;
         // Suporte 
         this.suporte = 0;
-   
         this.suporte5 = 0;
         this.suporte10 = 0;
         this.suporte100= 0;
@@ -51,11 +51,18 @@ class Robot {
         // Array com ultimos 14 valores de RSI
         this.mediaRSI = [];
         this.lastRSImedia = 0;
+
         this.currentMediaRSI14 = 0;
         this.lastRSI = 0;
-        this.resultofOrder = [];	
+
+        this.resultofOrder = [];
+
         this.resultTotal = 0
         this.resultOfSellOder = [];
+
+        this.resulOfSellOrder = []
+
+        this.currentTarget = 0;
 
 
     }
@@ -126,7 +133,16 @@ class Robot {
 }
     async analictEntry() {
         console.log(this.suporte , "Suporte");
-       setInterval( async () => {
+        setInterval( async () => {
+                if (this.havecurrency =  false && this.haveorder == false) {
+                    if (this.currentValor < this.suporte && this.currentRSI < 42 && this.lastRSI < this.lastRSImedia) {
+                        this.getOrder();
+                    }
+                 } else if (this.havecurrency == true && this.haveorder == false) {
+                    if (this.currentValor > this.resistencia && this.lastRSI > 52 || this.lastRSI > 60) {    
+                        this.getOrderSell();                    
+                    }
+                }
 
         }, 15000);
     }
@@ -149,38 +165,38 @@ class Robot {
     }
 
     async setStopLoss() {
-        if(this.havecurrency == true) {
+        if(this.havecurrency == true || this.haveorder == true) {            // take the last object o refult of order
             let lastOrder = this.resultofOrder[this.resultofOrder.length - 1];
             let lastOrderPrice = lastOrder.Buy
-            let porcent = 0.0049;
+            let porcent = 0.0052;
             let lastOrderPercent = lastOrderPrice * porcent;
             let stopLoss = lastOrderPrice - lastOrderPercent;
         
-            if (this.currentValor < stopLoss) {
+            if (this.currentValor <= stopLoss) {
                 this.getOrderSell();
-                this.havecurrency = false;
             } else {
-                console.log("O valor não esta no resistencia, e não está em stoploss");
+                console.log("Não está em stoploss");
             }
         }
     }
 
     async getStopGain() {
-        if (this.havecurrency = true) {
+        if (this.havecurrency = true || this.haveorder == true) {
              // take the last object o refult of order
              let lastOrder = this.resultofOrder[this.resultofOrder.length - 1];
              let lastOrderPrice = lastOrder.Buy
-             let porcent = 0.0030;
+             let porcent = 0.0042;
              let lastOrderPercent = lastOrderPrice * porcent;
-             let stopLoss = lastOrderPrice + lastOrderPercent;
-            if (this.currentValor >= stopLoss) {
+             let stopGain = lastOrderPrice + lastOrderPercent;
+
+            if (this.currentValor >= stopGain) {
                 this.getOrderSell();
-                this.havecurrency = false;
+                
             } else {
-                console.log('O valor não esta no resistencia, e não está em stopgain');
+                console.log('Não está no StopGain');
             }
         }
-}
+    }
 
     async cheackRSI() {
         console.log('RSI');
@@ -193,6 +209,7 @@ class Robot {
             }
 
             this.mediaRSI.push(rst); 
+
             let media = 0;
             if (this.mediaRSI.length > 14) {
                 this.mediaRSI.forEach(( element, i)=> {
@@ -203,38 +220,51 @@ class Robot {
                 this.currentMediaRSI14 = media / 14;
         }
         
-}, 60000);
+}, 35000);
 }
 
     async getOrder() {
-        console.log('Comprando o valor', this.currentValor);
-        this.resultofOrder.push({
-            Buy : this.currentValor,
-            RSI : this.currentRSI,
-            suporte : this.resistencia,
-            resistencia : this.resistencia
-            });
-        }
+        this.currentTarget = this.resistencia;
+        console.log('Order Buy');
+        let buyOrder = {
+            pair: this.syngal,
+            type: "buy",
+            amount: this.amount,
+            price: this.currentValor,
+            stop: this.currentTarget,
+            orderExec: "market"
+            }
+        
+        this.resultofOrder.push(buyOrder);
+        this.haveorder = true;
+        this.havecurrency = true;
+    }
 
     async getOrderSell() {
-        console.log('Vendendo', this.currentValor);
-        let lastOrder = this.resultofOrder[this.resultofOrder.length - 1];
-        let lastOrderPrice =  this.currentValor - lastOrder.Buy;
-        this.resultTotal += lastOrderPrice;
+        let OCOper1 = this.resistencia * 0.0049;
+        let OCOstopGain = this.currentTarget + OCOstop;
 
-        this.resultofSellOrder.push({
-            Buy: lastOrder.Buy,
-            Sell : this.currentValor,
-            RSI : this.currentRSI,
-            resistencia : this.suporte,
-            suporte : this.suporte,
-            result: lastOrderPrice
-            });
+        let OCOper2 = this.resistencia * 0.0030;
+        let OCOstopLoss = this.currentTarget - OCOstopLoss;
+
+        let sellOrder = {
+            pair: this.syngal,
+            type: "sell",
+            amount: this.amount,
+            price: this.currentValor,
+            stop: this.currentTarget,
+            OCOgain : OCOstopGain,
+            OCOloss : OCOstopLoss,
+            orderExec : "market"
+        }
+
+        this.resulOfSellOrder.push(sellOrder);
+        this.haveorder = false;
+        this.havecurrency = false;
     }
 
     async writeResult() {
         setInterval(async () => {
-        
             writeJson(this.resultofOrder, 'result.json');
             console.log("\x1b[33m",this.resultofOrder, "Resultado");
         

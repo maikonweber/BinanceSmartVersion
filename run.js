@@ -25,11 +25,15 @@ class Robot {
         this.suporte10 = 0;
         this.suporte100= 0;
         this.suporte500 = 0;
+        this.suporte1000 = 0;
+        this.suporte5000 = 0;
         this.resistencia = 0;
         this.resistencia5 = 0;
         this.resistencia10 = 0;
         this.resistencia100 = 0;
         this.resistencia500 = 0;
+        this.resistencia1000 = 0;
+        this.resistencia5000 = 0;
         // Resistencia
         this.resistencia = 0;
         // Melhor preço de compra 
@@ -97,24 +101,42 @@ class Robot {
     async getSuporte() {
         setInterval( async () => {
             console.log('Atualizando valores de ', this.syngal); 
-            this.suporte1 = this.lastStactis.supAndRes5.Suporte;
-            this.suporte10= this.lastStactis.supAndRes10.Suporte;
-            this.suporte100 = this.lastStactis.supAndRes100.Suporte;
-            this.suporte500 = this.lastStactis.supAndRes500.Suporte;
-            this.suporte = this.suporte1
+            this.suporte10 = this.lastStactis.supAndRes10.Suporte;
+            this.suporte20 = this.lastStactis.supAndRes20.Suporte;
+            this.suporte50 = this.lastStactis.supAndRes50.Suporte;
+            this.suporte100= this.lastStactis.supAndRes100.Suporte;
+     
+        
+            if (this.time == '1m') {
+            this.suporte = this.suporte10
+            } else if (this.time == '5m') {
+                this.suporte = this.suporte20
+            } else if (this.time == '15m') {
+                this.suporte = this.suporte50
+            } else if (this.time == '30m') {
+                this.suporte = this.suporte100
+            } else {
+                console.log('Erro ao atualizar Suporte')
+            }
 
-            console.log("Suporte Atualizados", this.suporte1, this.suporte10, this.suporte100, this.suporte500);
 
+            this.resistencia10 = this.lastStactis.supAndRes10.Resistencia;
+            this.resistencia20 = this.lastStactis.supAndRes20.Resistencia;            
+            this.resistencia50= this.lastStactis.supAndRes50.Resistencia;
+            this.resistencia100= this.lastStactis.supAndRes100.Resistencia;
+   
 
-            
-            this.resistencia1= this.lastStactis.supAndRes5.Resistencia;
-            this.resistencia5= this.lastStactis.supAndRes10.Resistencia;
-            this.resistencia10= this.lastStactis.supAndRes100.Resistencia;
-            this.resistencia500 = this.lastStactis.supAndRes500.Resistencia;
-            this.resistencia = this.resistencia1
-            
-
-            console.log("Resistencia Atualizados", this.resistencia, this.resistencia1, this.resistencia5, this.resistencia10, this.resistencia500);
+            if (this.time == '1m') {
+            this.resistencia = this.resistencia10
+            } else if (this.time == '5m') {
+                this.resistencia = this.resistencia20
+            } else if (this.time == '15m') {
+                this.resistencia = this.resistencia50
+            } else if (this.time == '30m') {
+                this.resistencia = this.resistencia100
+            } else {
+                console.log('Erro ao atualizar Resistencia')
+            }
 
 
 
@@ -136,9 +158,10 @@ class Robot {
         console.log(this.suporte , "Suporte");
         setInterval( async () => {
             console.log("Analisando Entranda")
-                if (this.havecurrency == false) {
+
+                if (this.havecurrency == false && this.suporte !=0) {
                     console.log('Não tem moeda');
-                    if (this.currentValor <= this.suporte && this.currentRSI < 42) {
+                    if (this.currentValor <= this.suporte && this.lastRSI < 42) {
                         this.getOrder();
                         console.log("Compra")
                     } else {
@@ -158,24 +181,15 @@ class Robot {
                     console.log("Existe divergencia em Ordem Ativas")
                 }
 
-        }, 15000);
+        }, 35000);
     }
 
     async getStrem() {
         console.log('Stream');
         setInterval( async () => {
-            console.log("\x1b[33m",this.CurrentTime,"\x1b[33m" , "Ultimo Atualizado");
-            console.log("\x1b[33m",this.suporte,"\x1b[31m" ,"Suporte");
-            console.log("\x1b[33m", this.resistencia, "\x1b[32m","Resistencia");
-            console.log("\x1b[33m",this.currentValor,"\x1b[35m" ,"Valor Atual");
-            console.log("\x1b[33m",this.currentTarget,"\x1b[36m" ,"RSI Atual");
-            console.log("\x1b[33m",this.lastRSI,"\x1b[36m" ,"Ultimo RSI");
-            console.log("\x1b[33m",this.lastRSImedia,"\x1b[36m" ,"Ultimo RSI media");
-            console.log("\x1b[33m",this.currentMediaRSI14,"\x1b[36m" ,"Media RSI 14");
-            console.log("\x1b[33m",this.tendencia,"\x1b[36m" ,"Tendencia");
-            console.log("\x1b[33m",this.havecurrency,"\x1b[36m" ,"Tem Moeda");
-            console.log("\x1b[33m",this.haveorder,"\x1b[36m" ,"Tem Ordem");
-            
+        
+            console.log('Atualizando valores de ', this.suporte, this.resistencia);
+
 
             console.table(this.resultofOrder);
             console.table(this.resultOfSellOder);
@@ -313,6 +327,8 @@ class Robot {
     }
 }
 
-const start = new Robot(100, 20, 100, 'BNBBUSD', '1m', '30', 100);
+const start = new Robot(100, 20, 100, 'BNBBUSD', '5m', '30', 100);
 start.Init();
 
+
+module.exports = Robot;

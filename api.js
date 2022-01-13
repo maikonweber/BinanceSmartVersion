@@ -16,7 +16,7 @@ async function getStreamPrices(Symbol = 'btcbusd'){
 
       
 
-async function privateCAll(path, data = {}, method = 'GET') {
+async function privateCall(path, data = {}, method = 'GET') {
     const timestamp = Date.now();
     const signature = crypto.createHmac('sha256', apiSecret)
                      .update(`${querystring.stringify({...data, timestamp})}`)
@@ -27,7 +27,7 @@ async function privateCAll(path, data = {}, method = 'GET') {
 
     try {
         const result = await axios({
-            method: method,
+            method,
             url: `${Api_url}${path}${qs}`,
             headers: {'X-MBX-APIKEY': apiKey}           
         });
@@ -72,7 +72,7 @@ async function exchangeInfo(){
 }
 
 async function accountInfo(){
-    return privateCAll('/v3/account');
+    return privateCall('/v3/account');
 }
 
 // Kline 5 min
@@ -84,6 +84,10 @@ async function kline(symbol = 'BTCBUSD', interval = '5m', limit = 10){
 async function ticker(symbol = 'BTCBUSD'){
     return publicCall('/v3/ticker/24hr', {symbol});
 }
+
+accountInfo().then( data => {
+    console.log(data);
+})
 
 
 

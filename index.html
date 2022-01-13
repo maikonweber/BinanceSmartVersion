@@ -35,7 +35,6 @@
         </style>
     </head>
     <body>
-<<<<<<< HEAD
         <div class="container">
             <div class="header">
                 <h1> Binance Smart Trade </h1>
@@ -44,20 +43,10 @@
         <div className="candlesGraph"></div>
         <div className="socketI0"></div>
         <footer> Compre o Bot</footer>
-        <script src="plotMaps.js">    
-    
-
-            
+        <script type="module" src="run.js" >
+            let start = new Robot(100, 20, 100, 'BNBBUSD', '1m', '30', 100);
+            start.Init()
         </script>
-=======
-        <h1> Bem Vindo </h1>
-        <div class="central"></div>
-        <script>
-            import { getCandleStatistc } from './js/candle.js';
-            d3.select("body").append("p").text("Hello, world!");   
-
-
-        </script>   
->>>>>>> abef6e5fef7258e65ec42b5345a0f669c5998789
+       
     </body>
 </html>

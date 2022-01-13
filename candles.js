@@ -40,11 +40,10 @@ async function getCandleStatistc(sygnal= 'BTCBUSD', time = '1h', interval = 30) 
       min1Candles[key].maxMin5m = await getMaxMin(sygnal, '5m', 30);
       min1Candles[key].maxMin15m = await getMaxMin(sygnal, '15m', 30);
       min1Candles[key].currentTime = moment(time.serverTime).format('YYYY-MM-DD HH:mm:ss');
-      min1Candles[key].supAndRes5 = await GetSupAndRes(sygnal, '10');
-      min1Candles[key].supAndRes10 = await GetSupAndRes(sygnal, '50');
+      min1Candles[key].supAndRes10 = await GetSupAndRes(sygnal, '10');
+      min1Candles[key].supAndRes20 = await GetSupAndRes(sygnal, '20');
+      min1Candles[key].supAndRes50 = await GetSupAndRes(sygnal, '50');
       min1Candles[key].supAndRes100 = await GetSupAndRes(sygnal, '100');
-      min1Candles[key].supAndRes500 = await GetSupAndRes(sygnal, '500');
-   
      
                   
     return min1Candles[key];

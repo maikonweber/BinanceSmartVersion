@@ -85,9 +85,6 @@ async function ticker(symbol = 'BTCBUSD'){
     return publicCall('/v3/ticker/24hr', {symbol});
 }
 
-accountInfo().then( data => {
-    console.log(data);
-})
 
 
 

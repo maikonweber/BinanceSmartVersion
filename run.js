@@ -127,18 +127,22 @@ class Robot {
    
 
             if (this.time == '1m') {
+                console.log('Tempo definido 1m');
             this.resistencia = this.resistencia10
             } else if (this.time == '5m') {
+                console.log('Tempo definido 5m');
                 this.resistencia = this.resistencia20
             } else if (this.time == '15m') {
+                console.log('Tempo definido 15m');
                 this.resistencia = this.resistencia50
             } else if (this.time == '30m') {
+                console.log('Tempo definido 30m');
                 this.resistencia = this.resistencia100
             } else {
                 console.log('Erro ao atualizar Resistencia')
             }
 
-
+        
 
         }, 60000);
     }
@@ -161,7 +165,7 @@ class Robot {
 
                 if (this.havecurrency == false && this.suporte !=0) {
                     console.log('Não tem moeda');
-                    if (this.currentValor <= this.suporte && this.lastRSI < 42) {
+                    if (this.currentValor <= this.suporte && this.lastRSI < 45) {
                         this.getOrder();
                         console.log("Compra")
                     } else {
@@ -188,15 +192,26 @@ class Robot {
         console.log('Stream');
         setInterval( async () => {
         
-            console.log('Atualizando valores de ', this.suporte, this.resistencia);
-
+            console.log("\x1b[33m",this.CurrentTime,"\x1b[33m" , "Ultimo Atualizado");
+            console.log("\x1b[33m",this.suporte,"\x1b[31m" ,"Suporte");
+            console.log("\x1b[33m", this.resistencia, "\x1b[32m","Resistencia");
+            console.log("\x1b[33m",this.currentValor,"\x1b[35m" ,"Valor Atual");
+            console.log("\x1b[33m",this.currentTarget,"\x1b[36m" ,"RSI Atual");
+            console.log("\x1b[33m",this.lastRSI,"\x1b[36m" ,"Ultimo RSI");
+            console.log("\x1b[33m",this.lastRSImedia,"\x1b[36m" ,"Ultimo RSI media");
+            console.log("\x1b[33m",this.currentMediaRSI14,"\x1b[36m" ,"Media RSI 14");
+            console.log("\x1b[33m",this.tendencia,"\x1b[36m" ,"Tendencia");
+            console.log("\x1b[33m",this.havecurrency,"\x1b[36m" ,"Tem Moeda");
+            console.log("\x1b[33m",this.haveorder,"\x1b[36m" ,"Tem Ordem");
+            
 
             console.table(this.resultofOrder);
             console.table(this.resultOfSellOder);
             
+            
 
            
-        }, 7000);
+        }, 15000);
     }
 
     async setStopLoss() {

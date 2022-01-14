@@ -314,6 +314,7 @@ class Robot {
             OCOloss : OCOstopLoss,
             orderExec : "market",
             time : this.CurrentTime
+            
         }
 
         this.resultOfSellOder.push(sellOrder);
@@ -342,7 +343,7 @@ class Robot {
     }
 }
 
-const start = new Robot(100, 20, 100, 'BNBBUSD', '1m', '30', 100);
+const start = new Robot(100, 20, 100, 'MATICBUSD', '5m', '30', 100);
 start.Init();
 
 

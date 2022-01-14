@@ -38,6 +38,19 @@ async function privateCall(path, data = {}, method = 'GET') {
     }
 }
 
+async function cancallAllOpenOrder(symbol){
+    return privateCall('/v3/openOrders', {symbol: symbol}, 'DELETE');
+}
+
+async function newOrder(symbol, quantity, price, side = 'BUY', type = 'Limit') {
+    const data  = {symbol, side, type, quantity, price};
+    if (price) data.price = price;
+    if (type === 'LIMIT') data.timeInForce = 'GTC';
+    console.log(data);
+
+     return privateCall('/v3/order', data, 'POST');
+    
+}
 
 //GET /api/v3/allOrders (HMAC SHA256)
 //  
@@ -85,7 +98,20 @@ async function ticker(symbol = 'BTCBUSD'){
     return publicCall('/v3/ticker/24hr', {symbol});
 }
 
+async function allCoin(symbol = 'BTCBUSD'){
 
+    return privateCall('/sapi/v1/capital/config/getall', {symbol}, 'GET');
+}
+
+async function func() {
+    const account = await accountInfo();
+    const coins = account.balances.filter(b => {
+        console.log(b)
+    });
+
+}
+
+func();
 
 
 module.exports = {
@@ -94,6 +120,8 @@ module.exports = {
     exchangeInfo,
     accountInfo,
     kline,
-    getStreamPrices
-
+    getStreamPrices,
+    ticker,
+    cancallAllOpenOrder,
+    newOrder
 };

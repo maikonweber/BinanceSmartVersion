@@ -63,19 +63,16 @@ async function checkHaveOrder(symbol = 'BTCBUSD'){
 
 }
 
-async function newOrder(symbol, quantity, price, side = 'BUY', stopPrice = 0, stopLimitPrice = 0, timeInForce = 'FOK') {
+async function newOrder(symbol, quantity, side,  type = 'MARKET') {
     const data  = {
         symbol : symbol,
         side : side,
         quantity : quantity,
-        stopLimitPrice,
-        price
     };
-
-    if (price) data.price = price;
-    console.log(data);
-
-     return privateCall('/v3/order/oco', data, 'POST');    
+    if (price) data.price = price
+    if (type === 'LIMIT') data.timeInForce = 'GTC';
+    
+     return privateCall('/v3/order', data, 'POST');    
 } 
 
 async function checkHaveOrder(symbol = 'BTCBUSD'){

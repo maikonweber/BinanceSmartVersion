@@ -284,13 +284,45 @@ class Robot {
 
     async getOrder() {
     
-
-
+        let buyOrder = {
+            pair: this.syngal,
+            type: "buy",
+            amount: this.amount,
+            Buy: this.currentValor,
+            stop: this.currentTarget,
+            orderExec: "market",
+            stop: this.currentTarget,
+            time: this.CurrentTime
+            }
+        
+        this.resultofOrder.push(buyOrder);
+        this.haveorder = true;
+        this.havecurrency = true;
     }
 
     async getOrderSell() {
-     
-        
+        let OCOper1 = this.resistencia * 0.0049;
+        let OCOstopGain = this.resistencia + OCOper1;
+
+        let OCOper2 = this.resistencia * 0.0030;
+        let OCOstopLoss = this.resistencia - OCOper2;
+
+        let sellOrder = {
+            pair: this.syngal,
+            type: "sell",
+            amount: this.amount,
+            price: this.currentValor,
+            stop: this.resistencia,
+            OCOgain : OCOstopGain,
+            OCOloss : OCOstopLoss,
+            orderExec : "market",
+            time : this.CurrentTime
+            
+        }
+
+        this.resultOfSellOder.push(sellOrder);
+        this.haveorder = false;
+        this.havecurrency = false;
     }
 
     async writeResult() {

@@ -3,6 +3,11 @@ let { getCandleStatistc } = require('./candles.js');
 var tulind = require('tulind');;
 let { getMMA } = require('./candles.js');
 let { writeJson } = require('./writeJson.js');
+const { ifHaveCoin } = require('./api.js');
+const { checkHaveOrder } = require('./api.js');
+const { cancallAllOpenOrder } = require('./api.js'); 
+const { newOCO } = require('./api.js');
+
 
 class Robot {
     constructor(amout, stopLoss, takeProfit, syngal, time, interval, saldoInicial) {
@@ -72,8 +77,8 @@ class Robot {
     async Init() {
         this.statist();
         this.getSuporte();
-        this.getTendecia();     
-        
+        this.getTendecia();    
+        this.checkOrder(this.syngal);
         this.getStrem(); 
         this.cheackRSI();
         this.writeResult();
@@ -159,7 +164,7 @@ class Robot {
         }, 30000);
 }
     async analictEntry() {
-        console.log(this.suporte , "Suporte");
+        this.checkifYouHave(this.syngal); 
         setInterval( async () => {
             console.log("Analisando Entranda")
 
@@ -207,8 +212,8 @@ class Robot {
 
             console.table(this.resultofOrder);
             console.table(this.resultOfSellOder);
-            
-            
+
+
 
            
         }, 15000);
@@ -278,9 +283,9 @@ class Robot {
 }
 
     async getOrder() {
-        console.log(this.currentTarget, "Target");
-        console.log("Compra");
-        console.log('Order Buy');
+    
+        
+
         let buyOrder = {
             pair: this.syngal,
             type: "buy",
@@ -336,6 +341,37 @@ class Robot {
             let result = this.resultTotal;
             console.log("\x1b[33m", result, "Resultado Total");
         }, 450000);
+    }
+
+    async checkifYouHave(symbol) {
+        console.log('Verificando se possui a moeda');
+         const result = await ifHaveCoin(symbol);
+          // Separate the symbol by the string b
+        let symbolArray = symbol.split('BUSD');
+        const result1 = await ifHaveCoin(symbolArray[0]);
+            if (result1.free > 0) {
+                this.havecurrency = true;
+            } else {
+                this.havecurrency = false;
+            }
+    }
+
+    async checkOrder(symbol) {
+        console.log('Verificando se possui a ordem');
+        const result = await checkHaveOrder(symbol);
+        console.log(result);
+        if (result.length > 0) {
+            this.haveorder = true;
+        } else {
+            this.haveorder = false;
+        }
+        console.log(this.haveorder, 'Check Order');
+    }
+
+    async cancelOrder(symbol) {
+        const result = await cancallAllOpenOrder(symbol);
+        console.log(result);
+        
     }
 
     async checkApprox(num1, num2, epsilon) {

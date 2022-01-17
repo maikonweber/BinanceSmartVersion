@@ -102,7 +102,7 @@ async function callIndicators(candlesData) {
 }  
 
 function roundToTwo(num) {    
-   return +(Math.round(num + "e+2")  + "e-2");
+   return +(Math.round(num + "e+3")  + "e-3");
 }
 async function formatBinaceDates(sygnal = 'BTCBUSC', time ='1h', inteval = 30) {
     

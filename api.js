@@ -42,14 +42,45 @@ async function cancallAllOpenOrder(symbol){
     return privateCall('/v3/openOrders', {symbol: symbol}, 'DELETE');
 }
 
-async function newOrder(symbol, quantity, price, side = 'BUY', type = 'Limit') {
-    const data  = {symbol, side, type, quantity, price};
-    if (price) data.price = price;
-    if (type === 'LIMIT') data.timeInForce = 'GTC';
+async function newOCO(symbol, quantity, price, side = 'BUY', stopPrice = 0, stopLimitPrice = 0, timeInForce = 'FOK') {
+    const data  = {
+        symbol : symbol, 
+        side : side, 
+        quantity : quantity,
+        stopPrice : stopPrice,
+        stopLimitPrice : stopLimitPrice,
+        price: price,
+        stopLimitTimeInForce: timeInForce
+    };
+
     console.log(data);
 
-     return privateCall('/v3/order', data, 'POST');
-    
+     return privateCall('/v3/order/oco', data, 'POST');    
+} 
+
+async function checkHaveOrder(symbol = 'BTCBUSD'){
+    return privateCall('/v3/openOrders', {symbol}, 'GET');
+
+}
+
+async function newOrder(symbol, quantity, price, side = 'BUY', stopPrice = 0, stopLimitPrice = 0, timeInForce = 'FOK') {
+    const data  = {
+        symbol : symbol,
+        side : side,
+        quantity : quantity,
+        stopLimitPrice,
+        price
+    };
+
+    if (price) data.price = price;
+    console.log(data);
+
+     return privateCall('/v3/order/oco', data, 'POST');    
+} 
+
+async function checkHaveOrder(symbol = 'BTCBUSD'){
+    return privateCall('/v3/openOrders', {symbol}, 'GET');
+
 }
 
 //GET /api/v3/allOrders (HMAC SHA256)
@@ -103,15 +134,14 @@ async function allCoin(symbol = 'BTCBUSD'){
     return privateCall('/sapi/v1/capital/config/getall', {symbol}, 'GET');
 }
 
-async function func() {
-    const account = await accountInfo();
-    const coins = account.balances.filter(b => {
-        console.log(b)
-    });
+async function ifHaveCoin(symbol) {
+    const account = await accountInfo();    
+    const coin = account.balances.filter(coin => symbol.indexOf(coin.asset) > -1);
+    const coin_list = coin.map(coin => coin.asset);
+    
+    return coin;
+    };
 
-}
-
-func();
 
 
 module.exports = {
@@ -123,5 +153,8 @@ module.exports = {
     getStreamPrices,
     ticker,
     cancallAllOpenOrder,
-    newOrder
+    newOrder,
+    ifHaveCoin,
+    checkHaveOrder,
+    newOCO,
 };

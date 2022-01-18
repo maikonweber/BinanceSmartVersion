@@ -236,7 +236,7 @@ async function GetSupAndRes(sygnal = 'BTCBUSD', dephInterval = '50') {
     
 }
 
-
+                     
 
 module.exports = {
       getCandleStatistc,

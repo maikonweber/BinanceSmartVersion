@@ -6,7 +6,7 @@ let { writeJson } = require('./writeJson.js');
 const { ifHaveCoin } = require('./api.js');
 const { checkHaveOrder } = require('./api.js');
 const { cancallAllOpenOrder } = require('./api.js'); 
-const { newOCO } = require('./api.js');
+const { newOCO, newOrder } = require('./api.js');
 const WebSocket = require('ws');
 const { roundToTwo } = require('./candles.js');
 const { allOrders } = require('./api.js');
@@ -250,24 +250,20 @@ class Robot {
 
     async setStopLoss() {
        if (this.havecurrency = true) {
-        if (this.haveorder == false) {
+        if (this.haveorder == true) {
             this.getAllOrder(this.syngal);
-            console.log(this.lastBuyPrice);
-            let porcent = 0.0052;
-           
-    
-              if (this.currentValor <= this.suporte) {
-                    this.getOrder();
+            const stopLoss = this.lastBuyPrice -  (this.lastBuyPrice * 0.05);             
+              if (this.currentValor <= stopLoss) {
+                    newOrder(this.syngal, this.amount, 'SELL')
                    console.log("Em ordem de Compra");
+              } else {
+                  console.log('Stop Loss não foi atingido')
               }
             }
        }
     }
 
-    async getStopGain() {
-       
-    }
-
+   
     async cheackRSI() {
         console.log('RSI');
         setInterval( async () => {
@@ -293,6 +289,7 @@ class Robot {
 }, 35000);
 }
 
+
     async getOrder() {
         console.log('Ordem');
         let OCOper1 = this.suporte * 0.002;
@@ -314,6 +311,7 @@ class Robot {
             stopPrice: OCOstopLoss,
             stopGain : OCOstopGain,
         }
+        newOCO(buyOrder.symbol, this.amout, buyOrder.stopGain, buyOrder.side, buyOrder.target, buyOrder.stopPrice);
 
         this.resultOfSellOder.push(buyOrder);
         this.haveorder = true;
@@ -395,13 +393,11 @@ class Robot {
         const result = await allOrders(symbol);
         // take the last order
         const lastOrder = result[result.length - 1];
-        this.lastBuyPrice = lastOrder.price;
-    
-        if (lastOrder.status != 'CANCELED') {
-            if (lastOrder.side == 'BUY') {
-            this.lastBuyPrice = lastOrder.price;
-        }
-    }
+        
+        const take = result.filter(element => element.status != 'CANCELED' && element.side == 'BUY');
+        const lastTake = take[take.length - 1];
+        this.lastBuyPrice = lastTake.price;
+        console.log(this.lastBuyPrice);        
     }
 
     async checkApprox(num1, num2, epsilon) {

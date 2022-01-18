@@ -251,7 +251,7 @@ class Robot {
             const stopLoss = this.lastBuyPrice -  (this.lastBuyPrice * 0.05);             
               if (this.currentValor <= stopLoss) {
                     newOrder(this.syngal, this.amount, 'SELL')
-                   console.log("Em ordem de Compra");
+                    console.log("Em ordem de Compra");
               } else {
                   console.log('Stop Loss não foi atingido')
               }

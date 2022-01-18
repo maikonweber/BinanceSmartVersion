@@ -61,7 +61,7 @@ async function checkHaveOrder(symbol = 'BTCBUSD'){
 
 }
 
-async function newOrder(symbol, quantity, side,  type = 'MARKET') {
+async function newOrder(symbol, quantity, side,  type = 'MARKET', price) {
     const data  = {
         symbol : symbol,
         side : side,

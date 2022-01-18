@@ -12,7 +12,7 @@ const { roundToTwo } = require('./candles.js');
 const { allOrders } = require('./api.js');
 
 class Robot {
-    constructor(amout, stopLoss, takeProfit, syngal, time, interval, saldoInicial) {
+    constructor(amout, syngal, time, interval) {
         // Order information
         this.havecurrency = false
         this.haveorder = false
@@ -20,9 +20,6 @@ class Robot {
         this.CurrentTime = null;
 
         this.amount = amout;
-
-        this.stopLoss = stopLoss;
-        this.takeProfit = takeProfit;
         this.syngal = syngal;
         this.time = time;
         this.interval = interval;
@@ -78,16 +75,15 @@ class Robot {
     }
 
     async Init() {
-        this.setStopLoss();
-        // this.statist();
-        // this.getSuporte();
-        // this.getTendecia();    
-        // this.checkOrder(this.syngal);
-        // this.getStrem(); 
-        // this.cheackRSI();
-        // this.writeResult();
-        // this.getResult();
-        // this.analictEntry();
+        this.statist();
+        this.getSuporte();
+        this.getTendecia();    
+        this.checkOrder(this.syngal);
+        this.getStrem(); 
+        this.cheackRSI();
+        this.writeResult();
+        this.getResult();
+        this.analictEntry();
     }
 
     async statist() {
@@ -186,7 +182,7 @@ class Robot {
                         this.checkOrder();
                         this.setStopLoss();
                         if (this.haveorder == false) {
-                    if (this.currentValor >= this.resistencia && this.lastRSI > 45 || this.lastRSI > 60) {    
+                    if (this.currentValor >= this.resistencia && this.lastRSI > 45) {    
                         this.getOrderSell();   
                         console.log('Venda')                 
                     } else {
@@ -199,7 +195,7 @@ class Robot {
                 console.log("Não tem moeda");
             }
 
-        }, 75000);
+        }, 45000);
     }
 
     async getStrem() {
@@ -221,7 +217,6 @@ class Robot {
                   }
                
                   this.currentValor = roundToTwo(btc.close);
-                  console.log(this.currentValor);
                 
               }
           });
@@ -409,7 +404,7 @@ class Robot {
     }
 }
 
-const start = new Robot(100, 20, 100, 'MATICBUSD', '5m', '30', 100);
+const start = new Robot(15,'MATICBUSD', '5m', '30');
 start.Init();
 
 

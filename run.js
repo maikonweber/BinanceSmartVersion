@@ -183,6 +183,7 @@ class Robot {
                         console.log("Valor dentro da ordem de OCO");
                     }
                     } else if (this.havecurrency == true) {
+                        this.checkOrder();
                         this.setStopLoss();
                         if (this.haveorder == false) {
                     if (this.currentValor >= this.resistencia && this.lastRSI > 45 || this.lastRSI > 60) {    
@@ -250,7 +251,7 @@ class Robot {
 
     async setStopLoss() {
        if (this.havecurrency = true) {
-        if (this.haveorder == true) {
+        if (this.haveorder == false) {
             this.getAllOrder(this.syngal);
             const stopLoss = this.lastBuyPrice -  (this.lastBuyPrice * 0.05);             
               if (this.currentValor <= stopLoss) {
@@ -311,7 +312,7 @@ class Robot {
             stopPrice: OCOstopLoss,
             stopGain : OCOstopGain,
         }
-        newOCO(buyOrder.symbol, this.amout, buyOrder.stopGain, buyOrder.side, buyOrder.target, buyOrder.stopPrice);
+        newOCO(buyOrder.symbol, this.amount, buyOrder.stopGain, buyOrder.side, buyOrder.target, buyOrder.stopPrice);
 
         this.resultOfSellOder.push(buyOrder);
         this.haveorder = true;
@@ -337,6 +338,9 @@ class Robot {
             stopPrice: OCOstopLoss,
             stopGain : OCOstopGain,
         }
+
+        newOCO(SellOrder.symbol, this.amount, SellOrder.stopGain, SellOrder.side, SellOrder.target, SellOrder.stopPrice);
+
 
         this.resultofOrder.push(SellOrder);
         this.haveorder = true;

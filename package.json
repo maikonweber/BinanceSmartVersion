@@ -21,7 +21,7 @@
     "pg": "^8.7.1",
     "technicalindicators": "^3.1.0",
     "tulind": "^0.8.20",
-    "ws": "^8.4.0"
+    "ws": "^8.4.2"
   },
   "devDependencies": {
     "electron": "^16.0.3"

@@ -235,13 +235,7 @@ async function GetSupAndRes(sygnal = 'BTCBUSD', dephInterval = '50') {
    return supRes
     
 }
-const run = async() => {
-   const node = await GetSupAndRes('BNBBUSD', '10');
-   console.log(node);
 
-}
-
-run();
 
 
 module.exports = {

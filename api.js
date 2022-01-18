@@ -7,14 +7,12 @@ const apiKey = process.env.API_KEY;
 const apiSecret = process.env.API_SECRET;
 const Api_url = process.env.API_URL;
 
-async function getStreamPrices(Symbol = 'btcbusd'){
-
-    // symbol string mandatory
-
-   
+async function getStreamPrices(Symbol = 'maticbusd'){
+  
     }
 
-      
+    getStreamPrices();
+     
 
 async function privateCall(path, data = {}, method = 'GET') {
     const timestamp = Date.now();
@@ -139,6 +137,9 @@ async function ifHaveCoin(symbol) {
     return coin;
     };
 
+async function allOrders(symbol = 'BTCBUSD') {
+    return privateCall('/v3/allOrders', {symbol}, 'GET');
+}
 
 
 module.exports = {
@@ -154,4 +155,5 @@ module.exports = {
     ifHaveCoin,
     checkHaveOrder,
     newOCO,
+    allOrders,
 };

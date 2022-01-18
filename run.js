@@ -7,7 +7,9 @@ const { ifHaveCoin } = require('./api.js');
 const { checkHaveOrder } = require('./api.js');
 const { cancallAllOpenOrder } = require('./api.js'); 
 const { newOCO } = require('./api.js');
-
+const WebSocket = require('ws');
+const { roundToTwo } = require('./candles.js');
+const { allOrders } = require('./api.js');
 
 class Robot {
     constructor(amout, stopLoss, takeProfit, syngal, time, interval, saldoInicial) {
@@ -43,6 +45,7 @@ class Robot {
         this.resistencia = 0;
         // Melhor preço de compra 
         this.bestBuyPrice = 0;
+
         // Statisticas no periodo de  99
         this.static = [];
         // Ultimo Statisticas
@@ -68,22 +71,23 @@ class Robot {
         this.resultTotal = 0
         this.resultOfSellOder = [];
 
-
+        this.steamPrice = 0;
         this.currentTarget = 0;
-
+        this.lastBuyPrice = 0;
 
     }
 
     async Init() {
-        this.statist();
-        this.getSuporte();
-        this.getTendecia();    
-        this.checkOrder(this.syngal);
-        this.getStrem(); 
-        this.cheackRSI();
-        this.writeResult();
-        this.getResult();
-        this.analictEntry();
+        this.setStopLoss();
+        // this.statist();
+        // this.getSuporte();
+        // this.getTendecia();    
+        // this.checkOrder(this.syngal);
+        // this.getStrem(); 
+        // this.cheackRSI();
+        // this.writeResult();
+        // this.getResult();
+        // this.analictEntry();
     }
 
     async statist() {
@@ -92,7 +96,6 @@ class Robot {
             let candle = await getCandleStatistc(this.syngal, this.time, this.interval);
             
             this.lastStactis = candle;
-            this.currentValor = candle.close;
             console.log("\x1b[31m",'Atualizando valores de ', this.syngal);
             this.CurrentTime = this.lastStactis.time;
 
@@ -163,23 +166,25 @@ class Robot {
         }
         }, 30000);
 }
-    async analictEntry() {
-        this.checkifYouHave(this.syngal); 
+    async analictEntry() {       
         setInterval( async () => {
             console.log("Analisando Entranda")
-
+            this.checkifYouHave(this.syngal); 
                 if (this.havecurrency == false && this.suporte !=0) {
-                    console.log('Não tem moeda');
-                    if (this.currentValor <= this.suporte && this.lastRSI < 45) {
-                        this.getOrder();
-                        console.log("Compra")
+                    this.checkOrder(); 
+                    if (this.haveorder == false) {
+                       if (this.currentValor <= this.suporte && this.lastRSI < 45) {
+                            this.getOrder();
+                            console.log("Em ordem de Compra");
+                        } else {
+                            console.log("Não comprou porque não está no suporte");
+                        }
                     } else {
-                        console.log("Não comprou porque não está no suporte");
+                        console.log("Valor dentro da ordem de OCO");
                     }
-                 } else if (this.havecurrency == true) {
-                    console.log("Tem a Moeda")
-                    this.getStopGain();
-                    this.setStopLoss();
+                    } else if (this.havecurrency == true) {
+                        this.setStopLoss();
+                        if (this.haveorder == false) {
                     if (this.currentValor >= this.resistencia && this.lastRSI > 45 || this.lastRSI > 60) {    
                         this.getOrderSell();   
                         console.log('Venda')                 
@@ -187,16 +192,40 @@ class Robot {
                         console.log("Não vendeu porque não está no Resistencia");
                     }
                 } else {
-                    console.log("Existe divergencia em Ordem Ativas")
-                }
+                    console.log("Já tem uma ordem"); 
+                } 
+            } else {
+                console.log("Não tem moeda");
+            }
 
-        }, 35000);
+        }, 75000);
     }
 
     async getStrem() {
-        console.log('Stream');
+        const time = '1m'
+        const Symbol  = (this.syngal).toLowerCase();
+        const ws = new WebSocket('wss://stream.binance.com:9443/ws/' + Symbol + '@kline_' + time);
+          ws.on('message', (data) => {
+
+              if (data) {
+                  const trade = JSON.parse(data);
+                  const btc = {
+                      symbol: trade.s,
+                      time: moment(trade.k.t).format('YYYY-MM-DD HH:mm:ss'),
+                      open: trade.k.o,
+                      close: trade.k.c,
+                      high: trade.k.h,
+                      low: trade.k.l,
+                      volume: trade.k.v,
+                  }
+               
+                  this.currentValor = roundToTwo(btc.close);
+                  console.log(this.currentValor);
+                
+              }
+          });
+      
         setInterval( async () => {
-        
             console.log("\x1b[33m",this.CurrentTime,"\x1b[33m" , "Ultimo Atualizado");
             console.log("\x1b[33m",this.suporte,"\x1b[31m" ,"Suporte");
             console.log("\x1b[33m", this.resistencia, "\x1b[32m","Resistencia");
@@ -213,54 +242,36 @@ class Robot {
             console.table(this.resultofOrder);
             console.table(this.resultOfSellOder);
 
-
-
            
         }, 15000);
-    }
+    }   
+
+    
 
     async setStopLoss() {
-        if(this.havecurrency == true ) {
-            console.log("Verificando o Stop Loss")            // take the last object o refult of order
-            let lastOrder = this.resultofOrder[this.resultofOrder.length - 1];
-            console.log("\x1b[33m",lastOrder,"\x1b[33m" ,"Ultimo Objeto");
-            let lastOrderPrice = lastOrder.Buy
+       if (this.havecurrency = true) {
+        if (this.haveorder == false) {
+            this.getAllOrder(this.syngal);
+            console.log(this.lastBuyPrice);
             let porcent = 0.0052;
-            let lastOrderPercent = lastOrderPrice * porcent;
-            let stopLoss = lastOrderPrice - lastOrderPercent;
-            console.log("Stop Loss", stopLoss);
-        
-            if (this.currentValor <= stopLoss) {
-                this.getOrderSell();
-            } else {
-                console.log("Não está em stoploss");
+           
+    
+              if (this.currentValor <= this.suporte) {
+                    this.getOrder();
+                   console.log("Em ordem de Compra");
+              }
             }
-        }
+       }
     }
 
     async getStopGain() {
-        if (this.havecurrency = true) {
-             // take the last object o refult of order
-             console.log("Verificando o Stop Gain")
-             let lastOrder = this.resultofOrder[this.resultofOrder.length - 1];
-             let lastOrderPrice = lastOrder.Buy
-             let porcent = 0.0042;
-             let lastOrderPercent = lastOrderPrice * porcent;
-             let stopGain = lastOrderPrice + lastOrderPercent;
-                console.log("Stop Gain", stopGain);
-            if (this.currentValor >= stopGain) {
-                this.getOrderSell();
-                
-            } else {
-                 console.log('Não está no StopGain');
-            }
-        }
+       
     }
 
     async cheackRSI() {
         console.log('RSI');
         setInterval( async () => {
-            this.lastRSI = this.lastStactis.RSI;
+            this.lastRSI = roundToTwo(this.lastStactis.RSI);
             
             const rst = {
                 RSI: this.lastStactis.RSI,
@@ -276,53 +287,61 @@ class Robot {
                         media += element.RSI;
                     }
                 });
-                this.currentMediaRSI14 = media / 14;
+                this.currentMediaRSI14 = roundToTwo(media / 14);
         }
         
 }, 35000);
 }
 
     async getOrder() {
-    
-        let buyOrder = {
-            pair: this.syngal,
-            type: "buy",
-            amount: this.amount,
-            Buy: this.currentValor,
-            stop: this.currentTarget,
-            orderExec: "market",
-            stop: this.currentTarget,
-            time: this.CurrentTime
-            }
+        console.log('Ordem');
+        let OCOper1 = this.suporte * 0.002;
+        let OCOstopGain = roundToTwo(this.suporte - OCOper1);
+        console.log(OCOstopGain);
         
-        this.resultofOrder.push(buyOrder);
+        let OCOper2 = this.suporte * 0.0015;
+        let OCOstopLoss = roundToTwo(this.suporte + OCOper2);
+        console.log(OCOstopLoss);
+
+        let buyOrder = {
+            symbol: this.syngal,
+            side: 'BUY',
+            type: 'OCO',
+            timeInForce: 'GTC',
+            quantity: this.quantity,
+            target: this.suporte,
+            Buy : this.currentValor,
+            stopPrice: OCOstopLoss,
+            stopGain : OCOstopGain,
+        }
+
+        this.resultOfSellOder.push(buyOrder);
         this.haveorder = true;
-        this.havecurrency = true;
     }
 
     async getOrderSell() {
-        let OCOper1 = this.resistencia * 0.0049;
-        let OCOstopGain = this.resistencia + OCOper1;
+        let OCOper1 = this.resistencia * 0.002;
+        let OCOstopGain = roundToTwo(this.resistencia + OCOper1);
+        console.log(OCOstopGain);
+        
+        let OCOper2 = this.resistencia * 0.0015;
+        let OCOstopLoss = rountToTwo(this.resistencia - OCOper2);
+        console.log(OCOstopLoss);
 
-        let OCOper2 = this.resistencia * 0.0030;
-        let OCOstopLoss = this.resistencia - OCOper2;
-
-        let sellOrder = {
-            pair: this.syngal,
-            type: "sell",
-            amount: this.amount,
-            price: this.currentValor,
-            stop: this.resistencia,
-            OCOgain : OCOstopGain,
-            OCOloss : OCOstopLoss,
-            orderExec : "market",
-            time : this.CurrentTime
-            
+        let SellOrder = {
+            symbol: this.syngal,
+            side: 'SELL',
+            type: 'OCO',
+            timeInForce: 'GTC',
+            quantity: this.quantity,
+            target: this.suporte,
+            Buy : this.currentValor,
+            stopPrice: OCOstopLoss,
+            stopGain : OCOstopGain,
         }
 
-        this.resultOfSellOder.push(sellOrder);
-        this.haveorder = false;
-        this.havecurrency = false;
+        this.resultofOrder.push(SellOrder);
+        this.haveorder = true;
     }
 
     async writeResult() {
@@ -356,7 +375,7 @@ class Robot {
 
     async checkOrder(symbol) {
         console.log('Verificando se possui a ordem');
-        const result = await checkHaveOrder(symbol);
+        const result = await checkHaveOrder(symbol);        
         console.log(result);
         if (result.length > 0) {
             this.haveorder = true;
@@ -370,6 +389,19 @@ class Robot {
         const result = await cancallAllOpenOrder(symbol);
         console.log(result);
         
+    }
+
+    async getAllOrder(symbol) {
+        const result = await allOrders(symbol);
+        // take the last order
+        const lastOrder = result[result.length - 1];
+        this.lastBuyPrice = lastOrder.price;
+    
+        if (lastOrder.status != 'CANCELED') {
+            if (lastOrder.side == 'BUY') {
+            this.lastBuyPrice = lastOrder.price;
+        }
+    }
     }
 
     async checkApprox(num1, num2, epsilon) {

@@ -302,7 +302,7 @@ class Robot {
             side: 'BUY',
             type: 'OCO',
             timeInForce: 'GTC',
-            quantity: this.quantity,
+            quantity: this.amount,
             target: this.suporte,
             Buy : this.currentValor,
             stopPrice: OCOstopLoss,
@@ -313,7 +313,7 @@ class Robot {
 
         this.resultOfSellOder.push(buyOrder);
         this.haveorder = true;
-    }
+shh     }
 
     async getOrderSell() {
         let OCOper1 = this.resistencia * 0.002;
@@ -329,7 +329,7 @@ class Robot {
             side: 'SELL',
             type: 'OCO',
             timeInForce: 'GTC',
-            quantity: this.quan ity,
+            quantity: this.amount,
             target: this.suporte,
             Buy : this.currentValor,
             stopPrice: OCOstopLoss,

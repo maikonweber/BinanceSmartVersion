@@ -12,14 +12,14 @@ const { roundToTwo } = require('./candles.js');
 const { allOrders } = require('./api.js');
 
 class Robot {
-    constructor(amout, syngal, time, interval) {
+    constructor(amount, syngal, time, interval) {
         // Order information
         this.havecurrency = false
         this.haveorder = false
         // params
         this.CurrentTime = null;
 
-        this.amount = amout;
+        this.amount = amount;
         this.syngal = syngal;
         this.time = time;
         this.interval = interval;
@@ -250,7 +250,8 @@ class Robot {
             this.getAllOrder(this.syngal);
             const stopLoss = this.lastBuyPrice -  (this.lastBuyPrice * 0.05);             
               if (this.currentValor <= stopLoss) {
-                    newOrder(this.syngal, this.amount, 'SELL')
+                    const stop = await newOrder(this.syngal, this.amount, 'SELL')
+                    console.timeLog(stop)
                     console.log("Em ordem de Compra");
               } else {
                   console.log('Stop Loss não foi atingido')
@@ -307,7 +308,8 @@ class Robot {
             stopPrice: OCOstopLoss,
             stopGain : OCOstopGain,
         }
-        newOCO(buyOrder.symbol, this.amount, buyOrder.stopGain, buyOrder.side, buyOrder.target, buyOrder.stopPrice);
+        const buyorder = await newOCO(buyOrder.symbol, this.amount, buyOrder.stopGain, buyOrder.side, buyOrder.target, buyOrder.stopPrice);
+        console.log(buyorder);
 
         this.resultOfSellOder.push(buyOrder);
         this.haveorder = true;
@@ -327,15 +329,15 @@ class Robot {
             side: 'SELL',
             type: 'OCO',
             timeInForce: 'GTC',
-            quantity: this.quantity,
+            quantity: this.quan ity,
             target: this.suporte,
             Buy : this.currentValor,
             stopPrice: OCOstopLoss,
             stopGain : OCOstopGain,
         }
 
-        newOCO(SellOrder.symbol, this.amount, SellOrder.stopGain, SellOrder.side, SellOrder.target, SellOrder.stopPrice);
-
+        const sellOrder = await newOCO(SellOrder.symbol, this.amount, SellOrder.stopGain, SellOrder.side, SellOrder.target, SellOrder.stopPrice);
+        console.log(sellOrder);
 
         this.resultofOrder.push(SellOrder);
         this.haveorder = true;

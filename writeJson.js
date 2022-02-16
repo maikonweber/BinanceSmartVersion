@@ -5,8 +5,19 @@ const fs = require('fs');
 
 
     function writeJson(resultofOrder) {
-        fs.writeFileSync(`${os.homedir()}/result.json`, JSON.stringify(resultofOrder));
-        console.log('escrevendo um json')
+        // WriteCSV of Result
+        // Create result json file
+        const result = {
+            "result": resultofOrder
+        };
+        // Path to the file to windown
+        const path = os.homedir() + '/Desktop/result.json';
+       
+        fs.writeFile(path, JSON.stringify(result), function (err) {
+            if (err) {
+                console.log(err);
+            }
+        });
     }
 
     module.exports

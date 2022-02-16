@@ -42,10 +42,19 @@
         <h1> Bem Vindo </h1>
         <div className="candlesGraph"></div>
         <div className="socketI0"></div>
+        <Button className='btn' >
+            <input type="button" value="Valor" />
+            <input type="button" value="" />
+            <span>
+                
+            </span>
         <footer> Compre o Bot</footer>
-        <script type="module" src="run.js" >
-            let start = new Robot(100, 20, 100, 'BNBBUSD', '1m', '30', 100);
-            start.Init()
+        <script>
+            console.log('teste')
+            const { Robot } = require('./run.js')
+            console.log(Robot)
+
+       
         </script>
        
     </body>

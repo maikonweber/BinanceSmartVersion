@@ -9,8 +9,10 @@ app.on('ready', () => {
         webPreferences: {
             nodeIntegration: true,
             webSecurity: false,
-            devTools: true 
+            devTools: true, 
+            allowRunningInsecureContent : true
         }
+        
         // Dev Tools: true
 
      

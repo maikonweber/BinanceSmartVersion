@@ -234,6 +234,7 @@ class Robot {
             console.log("\x1b[33m",this.havecurrency,"\x1b[36m" ,"Tem Moeda");
             console.log("\x1b[33m",this.haveorder,"\x1b[36m" ,"Tem Ordem");
             
+            console.log("\x1b[33m",this.suporte, "\x1b[36m" ,"Ultimo MMA10");
 
             console.table(this.resultofOrder);
             console.table(this.resultOfSellOder);
@@ -345,11 +346,11 @@ shh     }
 
     async writeResult() {
         setInterval(async () => {
-            writeJson(this.resultofOrder, 'result.json');
+            writeJson(this.resultofOrder, 'resultofOrder.json');
+            writeJson(this.resultOfSellOder, 'resultOfSellOder.json');
             console.log("\x1b[33m",this.resultofOrder, "Resultado");
         
-            
-        }, 3600000);      
+        }, 500000);      
     }
 
     async getResult() {
@@ -394,7 +395,6 @@ shh     }
         const result = await allOrders(symbol);
         // take the last order
         const lastOrder = result[result.length - 1];
-        
         const take = result.filter(element => element.status != 'CANCELED' && element.side == 'BUY');
         const lastTake = take[take.length - 1];
         this.lastBuyPrice = lastTake.price;
@@ -404,10 +404,12 @@ shh     }
     async checkApprox(num1, num2, epsilon) {
         return Math.abs(num1 - num2) <= epsilon;
     }
-}
-
-const start = new Robot(15,'MATICBUSD', '5m', '30');
-start.Init();
 
 
-module.exports = Robot;
+
+    }
+
+ //    Defaults modules export  
+    module.exports = {
+        Robot: Robot
+    }

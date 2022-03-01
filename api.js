@@ -7,6 +7,10 @@ const apiKey = process.env.API_KEY;
 const apiSecret = process.env.API_SECRET;
 const Api_url = process.env.API_URL;
 
+
+const roundToTwo = num => +(Math.round(num + "e+2")  + "e-2");
+
+console.log(apiKey, apiSecret, Api_url);
 async function getStreamPrices(Symbol = 'maticbusd'){
   
     }
@@ -66,6 +70,7 @@ async function newOrder(symbol, quantity, side,  type = 'MARKET', price) {
         symbol : symbol,
         side : side,
         quantity : quantity,
+        type : type,
     };
     if (price) data.price = price
     if (type === 'LIMIT') data.timeInForce = 'GTC';
@@ -73,10 +78,10 @@ async function newOrder(symbol, quantity, side,  type = 'MARKET', price) {
      return privateCall('/v3/order', data, 'POST');    
 } 
 
-async function checkHaveOrder(symbol = 'BTCBUSD'){
-    return privateCall('/v3/openOrders', {symbol}, 'GET');
+// async function checkHaveOrder(symbol = 'BTCBUSD'){
+//     return privateCall('/v3/openOrders', {symbol}, 'GET');
 
-}
+// }
 
 //GET /api/v3/allOrders (HMAC SHA256)
 //  
@@ -141,6 +146,13 @@ async function allOrders(symbol = 'BTCBUSD') {
     return privateCall('/v3/allOrders', {symbol}, 'GET');
 }
 
+// (async () => {
+//     // get  new order
+//     const quantity = roundToTwo(10 / 1,64);
+//     console.log(quantity);
+//     const result = await newOrder('MATICBUSD', quantity ,'BUY', 'LIMIT', 1,625);
+//     console.log(result);
+// })();
 
 module.exports = {
     time, 

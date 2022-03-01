@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "run": "node -r dotenv/config candles.js",
+    "run": "node -r dotenv/config api.js",
     "dev": "electron . dotenv/config",
     "start": "node -r dotenv/config run.js",
     "test": "echo \"Error: no test specified\" && exit 1"

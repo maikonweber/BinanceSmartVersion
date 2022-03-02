@@ -4,11 +4,11 @@ var pg = require("pg");
 
 
 var client = new pg.Client({
-  user: "postgres",
-  password: "mara128sio4",
+  user: "binance",
+  password: "binance",
   database: "binance",
-  port: 5735,
-  host: "0.0.0.0",
+  port: 5535,
+  host: "localhost",
   ssl: {
     rejectUnauthorized: false
   }
@@ -17,26 +17,34 @@ var client = new pg.Client({
 client.connect();
 
 
-async function insertOrder(pair, type, amount, price, stop, orderExec, Buy, tim) {
+async function insertOrder(symbol, side, price, quantity, ordertype, stopprice, target) {
     const client = await pool.connect()
+    
     try {
-        const result = await client.query('INSERT INTO ordersBuy(pair, type, amount, price, stop, orderExec, Buy) VALUES ($1, $2, $3, $4, $5, $6, $7)', 
-        [price, type, amount, price, stop, orderExec, Buy])
-        
+        const result = await client.query(`
+        INSERT INTO openorder (symbol, side, price, quantity, ordertype, stopprice, target) 
+        VALUES ($1, $2, $3, $4, $5, $6)`, 
+        [symbol, side, quantity, price, stopprice, target]);
+        console.log(result);
+
     } catch (err) {
         console.log(err)
     } finally {
         return result.rows
     }
 
-    async function sellOrder(pair, type, amount, price, stop, OCOgain, OCOloss, orderExec, time) {
+    async function verifyLastOrder(pair, type, amount, price, stop, OCOgain, OCOloss, orderExec, time) {
         try {
-            const result = await client.query('INSERT INTO SellOrder(pair, type, amount, price, stop, gain, loss,orderExec, time) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)', 
-            [pair, type, amount, price, stop, OCOgain, OCOloss,orderExec, time])
-        }   catch (err) {
+            const result = await client.query(`
+            Select * 
+            from 
+            openorder
+            order by timestamp desc`);
+        } catch (err) {
             console.log(err)
+        } finally {
+            return result.rows[0]
         }
-
     }
 
 

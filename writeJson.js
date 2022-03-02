@@ -3,6 +3,11 @@
 const os = require('os');
 const fs = require('fs');
 
+- POSTGRES_PASSWORD=mara128sio4
+- POSTGRES_DATABASE=nagano_db
+- POSTGRES_USERNAME=nagano
+- POSTGRES_HOST=database
+
 
     function writeJson(resultofOrder) {
         // WriteCSV of Result

@@ -8,6 +8,7 @@ const apiSecret = process.env.API_SECRET;
 const Api_url = process.env.API_URL;
 
 
+
 const roundToTwo = num => +(Math.round(num + "e+2")  + "e-2");
 
 console.log(apiKey, apiSecret, Api_url);
@@ -19,7 +20,7 @@ async function getStreamPrices(Symbol = 'maticbusd'){
      
 
 async function privateCall(path, data = {}, method = 'GET') {
-    const timestamp = Date.now();
+    const timestamp = moment().valueOf();
     const signature = crypto.createHmac('sha256', apiSecret)
                      .update(`${querystring.stringify({...data, timestamp})}`)
                      .digest('hex');
@@ -147,11 +148,10 @@ async function allOrders(symbol = 'BTCBUSD') {
 }
 
 // (async () => {
-//     // get  new order
-//     const quantity = roundToTwo(10 / 1,64);
-//     console.log(quantity);
-//     const result = await newOrder('MATICBUSD', quantity ,'BUY', 'LIMIT', 1,625);
-//     console.log(result);
+//     const symbol = 'BTCBUSD';
+//    const account = await accountInfo();
+//    console.log(account);
+   
 // })();
 
 module.exports = {

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "buid_data": "docker-compose up f docker_compose.yml -d",
     "run": "node -r dotenv/config api.js",
     "dev": "electron . dotenv/config",
     "start": "node -r dotenv/config run.js",

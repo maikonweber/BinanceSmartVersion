@@ -1,8 +1,5 @@
 const moment = require('moment');
 let { getCandleStatistc } = require('./candles.js');
-var tulind = require('tulind');;
-let { getMMA } = require('./candles.js');
-let { writeJson } = require('./writeJson.js');
 const { ifHaveCoin } = require('./api.js');
 const { checkHaveOrder } = require('./api.js');
 const { cancallAllOpenOrder } = require('./api.js'); 
@@ -10,6 +7,8 @@ const { newOCO, newOrder } = require('./api.js');
 const WebSocket = require('ws');
 const { roundToTwo } = require('./candles.js');
 const { allOrders } = require('./api.js');
+const { insertOrder } = require('./db.js');
+const { verifyLastOrder } = require('./db.js');
 
 
 
@@ -46,7 +45,6 @@ class Robot {
         // Statisticas no periodo de  99
         this.static = [];
         // Ultimo Statisticas
-
         this.lastStactis = {};
         this.currentValor = 0;
         // Tendencia
@@ -75,13 +73,11 @@ class Robot {
         this.getSuporte();
         this.getTendecia();    
         this.getStrem(); 
-        this.cheackRSI();
-        this.writeResult();
-        this.getResult();
-        this.analictEntry();
-        this.console_();
+        this.cheackRSI();   
         this.console__();
-        
+        this.setStopCurrentTarget();
+        this.analictEntry();  
+        this.cheackAmount();   
     }
 
     async statist() {
@@ -104,18 +100,17 @@ class Robot {
         
 // Print all properties of the object
         setInterval(async () => {
-            console.log(this.bestBuyPrice);
-            console.log(this.resistencia);
-            console.log(this.suporte);
-            console.log(this.tendencia);
-            console.log(this.currentRSI);
-            console.log(this.currentValor);
-            console.log(this.lastRSI);
-            console.log(this.lastRSImedia);
-            console.log(this.currentMediaRSI14);
-            console.log(this.deph2Sup);
+            console.log(this.resistencia, "resistencia");
+            console.log(this.suporte, "suporte");
+            console.log(this.tendencia, "tendencia");
+            console.log(this.currentValor, "currentValor");
+            console.log(this.lastRSI, "lastRSI");
+            console.log(this.lastRSImedia, "lastRSImedia");
+            console.log(this.quantity_, "amount");
+            console.log(this.setStopLoss, "currentRSI");
+            console.log(this.currentTarget, "currentTarget");
 
-        }, 10000);
+        }, 30000);
     }
 
     async getSuporte() {
@@ -211,7 +206,7 @@ class Robot {
             this.buy();
 
         } else {
-            console.log('Não comprou pois o valor atual é maior que o suporte', this.suporte , 'e o RSI é', this.lastRSI);
+            console.log(`Não comprou pois o valor atual ${this.currentValor} é maior que o suporte`, this.suporte , 'e o RSI é', this.lastRSI);
         }
     }
 
@@ -261,19 +256,24 @@ class Robot {
           });
     }   
 
-    async console_() {
+    async cheackAmount() {
         setInterval( async () => {
-            this.quantity_ = roundToTwo(this.amount / this.currentValor);
-            const stopLoss = roundToTwo(this.lastBuyPrice - (this.lastBuyPrice * 0.02));   
-            this.setStopLoss = stopLoss;
-
-            this.currentTarget = roundToTwo(this.lastBuyPrice + (this.lastBuyPrice * 0.007));
-            
+            this.quantity_ = roundToTwo(this.amount / this.currentValor);    
         }, 25000);
-    
-
     }
 
+    async setStopCurrentTarget() {
+        // Round to three decimal places
+        setInterval( async () => {
+            if (this.lastBuyPrice != 0) {   
+            this.stopLoss =  roundToTwo(this.lastBuyPrice - (this.lastBuyPrice * 0.0075));
+            }
+
+            if (this.lastBuyPrice != 0) {
+            this.currentTarget = roundToTwo(this.lastBuyPrice + (this.lastBuyPrice * 0.01));    
+            }
+        }, 25000);
+    }
  
     async cheackRSI() {
         console.log('RSI');
@@ -300,84 +300,27 @@ class Robot {
 }, 35000);
 }
 
-
     async buy() {
-        console.log('Buy Ordem ');
-        let OCOper1 = this.suporte * 0.002;
-        let OCOstopGain = roundToTwo(this.suporte - OCOper1);
-        console.log(OCOstopGain);
-        
-        let OCOper2 = this.suporte * 0.0015;
-        let OCOstopLoss = roundToTwo(this.suporte + OCOper2);
-        console.log(OCOstopLoss);
-
-        this.lastBuyPrice = this.currentValor;
-
-        let buyOrder = {
-            symbol: this.syngal,
-            side: 'BUY',
-            type: 'OCO',
-            timeInForce: 'GTC',
-            target: this.suporte,
-            Buy : this.currentValor,
-            stopPrice: OCOstopLoss,
-            stopGain : OCOstopGain,
-            Lucro : 'Ordem de Compra'
+        const buyOrder = await newOrder(this.syngal, 'BUY', this.quantity_, 'MARKET', this.currentValor);
+        if (buyOrder.msg == 'Order placed successfully') {
+            this.havecurrency = true;
+            this.lastBuyPrice = this.currentValor
+            const insert = await insertOrder(this.syngal, 'BUY', this.currentValor, this.quantity_ , 'MARKET');
+            console.log(insert);
         }
 
-        const result = await newOrder(buyOrder.symbol, this.quantity_ , 'BUY', 'MARKET', buyOrder.Buy);
-        console.log(result);
-        this.resultofOrder.push(buyOrder);
-        // this.haveorder = true;
-        this.havecurrency = true;
-   }
+    }
 
     async sell() {
-        console.log('Sell Ordem')
-        let OCOper1 = this.resistencia * 0.002;
-        let OCOstopGain = roundToTwo(this.resistencia + OCOper1);
-        console.log(OCOstopGain);
-        
-        let OCOper2 = this.resistencia * 0.0015;
-        let OCOstopLoss = roundToTwo(this.resistencia - OCOper2);
-        console.log(OCOstopLoss);
-
-        let SellOrder = {
-            symbol: this.syngal,
-            side: 'SELL',
-            type: 'OCO',
-            timeInForce: 'GTC',
-            quantity: this.amount / this.currentValor,
-            target: this.suporte,
-            Buy : this.currentValor,
-            stopPrice: OCOstopLoss,
-            stopGain : OCOstopGain,
-            Lucro : this.currentValor - this.lastBuyPrice
+        const sellOrder = await newOrder(this.syngal, 'SELL', this.quantity_, 'MARKET', this.currentValor);
+        if (sellOrder.msg == 'Order placed successfully') {
+            this.havecurrency = false;
+            const insert = await insertOrder(this.syngal, 'SELL', this.currentValor, this.quantity_ , 'MARKET');
+            console.log(insert);
         }
-
-        const result = await newOrder(SellOrder.symbol, this.quantity_ , 'SELL', 'MARKET', SellOrder.Buy);
-        console.log(result);
-        this.resultofOrder.push(SellOrder);
-        // this.haveorder = false;
-        this.havecurrency = false;
     }
 
-    async writeResult() {
-        setInterval(async () => {
-            writeJson(this.resultofOrder, 'resultofOrder.json');
-            writeJson(this.resultOfSellOder, 'resultOfSellOder.json');
-            console.log("\x1b[33m",this.resultofOrder, "Resultado");
-        
-        }, 500000);      
-    }
-
-    async getResult() {
-        setInterval(async () => {
-            let result = this.resultTotal;
-            console.log("\x1b[33m", result, "Resultado Total");
-        }, 450000);
-    }
-
+ 
     async checkifYouHave(symbol) {
         console.log('Verificando se possui a moeda');
          let result = await ifHaveCoin(symbol);
@@ -414,7 +357,6 @@ class Robot {
 
     async getAllOrder(symbol) {
         const result = await allOrders(this.symbol);
-        // take the last order
         const lastOrder = result[result.length - 1];
         const take = result.filter(element => element.status != 'CANCELED' && element.side == 'BUY');
         const lastTake = take[take.length - 1];
@@ -425,16 +367,11 @@ class Robot {
     async checkApprox(num1, num2, epsilon) {
         return Math.abs(num1 - num2) <= epsilon;
     }
+}
 
-
-
-    }
-
-    const app = new Robot(10, 'MATICBUSD', '1m', 30);
-    app.Init();
-
+  
 
  //    Defaults modules export  
-    module.exports = {
-        Robot: Robot
-    }
+module.exports = {
+    Robot
+}

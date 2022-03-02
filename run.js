@@ -107,7 +107,7 @@ class Robot {
             console.log(this.lastRSI, "lastRSI");
             console.log(this.lastRSImedia, "lastRSImedia");
             console.log(this.quantity_, "amount");
-            console.log(this.setStopLoss, "currentRSI");
+            console.log(this.setStopLoss, "setStopLoss");
             console.log(this.currentTarget, "currentTarget");
 
         }, 30000);
@@ -256,9 +256,18 @@ class Robot {
           });
     }   
 
+    roundtoOne(number) {
+
+     const ret = Math.round(number);
+
+     return ret;
+
+    }
+
     async cheackAmount() {
+
         setInterval( async () => {
-            this.quantity_ = roundToTwo(this.amount / this.currentValor);    
+            this.quantity_ = this.roundtoOne(this.amount / this.currentValor);    
         }, 25000);
     }
 

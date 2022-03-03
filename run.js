@@ -17,6 +17,7 @@ class Robot {
         // Order information
         this.havecurrency = false;
         this.haveorder = false
+        this.orderId = null;
         // params
         this.CurrentTime = null;
         this.amount = amount;
@@ -70,14 +71,18 @@ class Robot {
 
     async Init() {
         this.statist();
+        this.checkOrderActive();
+        this.checkOrder();
+        this.cheackCurrency();
         this.getSuporte();
         this.getTendecia();    
         this.getStrem(); 
         this.cheackRSI();   
         this.console__();
         this.setStopCurrentTarget();
-        this.analictEntry();  
-        this.cheackAmount();   
+        // this.analictEntry();  
+        this.cheackAmount();  
+        this.giveUp();   
     }
 
     async statist() {
@@ -93,7 +98,7 @@ class Robot {
                 this.static.shift();
             }
 
-            }, 10000);
+            }, 60000);
 }
 
     async console__() {
@@ -159,7 +164,7 @@ class Robot {
 
         
 
-        }, 60000);
+        }, 75000);
     }
 
     async getTendecia() {
@@ -174,26 +179,28 @@ class Robot {
         }, 30000);
 }
     async analictEntry() {       
-        setInterval( async () => {
-            if (this.havecurrency == false && this.haveorder == false) {
+            if (this.havecurrency == false) {
+                console.log('Não tem moeda');
               this.analictBuy();
-            } else if (this.havecurrency == true && this.haveorder == false) {
-                this.analictSell();
+            } else {
+                console.log('Tem moeda');
+              this.analictSell();
             }
-
-        }, 10000);
     }
 
     async analictSell() {
         console.log('Analisando Venda')
         if (this.currentValor >= this.resistencia && this.lastRSI > 45) {
+            this.cancelOrder();
             console.log('Venda Resistencia');
             this.sell();
            } else if (this.currentValor <= this.stopLoss) {
+            this.cancelOrder();
             console.log('Venda STOPLOSS');
             this.sell();
-           } else if (this.currentRSI > 75) {
-            console.log('Venda currentRSI > 75');
+           } else if (this.currentRSI > 78) {
+            console.log('Venda currentRSI > 78');
+            this.cancelOrder();
             this.sell();  
            }
     }
@@ -203,33 +210,64 @@ class Robot {
         if (this.currentValor <= this.suporte && this.lastRSI < 45)
         {
             console.log('Compra Suporte');
+            this.cancelOrder();
             this.buy();
-
         } else {
             console.log(`Não comprou pois o valor atual ${this.currentValor} é maior que o suporte`, this.suporte , 'e o RSI é', this.lastRSI);
         }
     }
 
-    async checkOrder() {
-        const order = await allOrders();
-        console.log(order);
-        if (order.length > 0) {
-            this.haveorder = true;
+    async giveUp() {
+        setInterval(async () => {
+        console.log('Desistindo da compra');
+    if (this.haveorder == true) {
+        if (this.currentValor >= (this.suporte + (this.suporte * 0.09))) {
+            this.cancelOrder(); 
+        } else { 
+            console.log("Não desistiu pois o valor atual é menor que o suporte");
         }
-            else {
-                this.haveorder = false;
+    } else if (this.haveorder == true && this.havecurrency == true ) { 
+            if (this.currentValor <= (this.resistencia + (this.resistencia * 0.09))) {
+                this.cancelOrder();
             }
+        }
+    else {
+        console.log('Não desistiu pois não há ordem');
+    }
+
+}, 60000);
+   
+}
+
+    async checkOrder() {
+        setInterval( async () => {
+        if (this.haveorder == false) {
+            console.log('Não há ordem');
+            this.analictEntry();
+
+        } else {
+            console.log('Já tem ordem em andamento');
+            if (this.currentValor <= this.stopLoss) {
+                console.log('Venda STOPLOSS');
+                this.cancelOrder();
+                this.sell();
+               }
+        }
+
+    }, 60000);
+
     }
 
     async cheackCurrency() {
-        const letter = this.syngal
-       // Count the string
-        const count = (letter.match(/[a-z]/gi) || []).length;
-     // Seach for BUSD in String and slice
-        const search = letter.search('BUSD');
-        const slice = letter.slice(search, count);
-        const lol = await ifHaveCoin(slice);
-        console.log(lol)
+        setInterval( async () => {
+        const currency = await ifHaveCoin(this.syngal);
+        if (currency[0].free > 2) {
+            this.havecurrency = true;
+        } else {
+            this.havecurrency = false;
+        }
+
+    }, 60000);
     }
 
     async getStrem() {
@@ -257,31 +295,28 @@ class Robot {
     }   
 
     roundtoOne(number) {
-
-     const ret = Math.round(number);
-
-     return ret;
-
+        // Rount to two decimal places
+        return Math.round(number * 10) / 10;
     }
 
     async cheackAmount() {
 
         setInterval( async () => {
             this.quantity_ = this.roundtoOne(this.amount / this.currentValor);    
-        }, 25000);
+        }, 60000);
     }
 
     async setStopCurrentTarget() {
         // Round to three decimal places
         setInterval( async () => {
             if (this.lastBuyPrice != 0) {   
-            this.stopLoss =  roundToTwo(this.lastBuyPrice - (this.lastBuyPrice * 0.0075));
+            this.stopLoss = roundToTwo(this.lastBuyPrice - (this.lastBuyPrice * 0.0075));
             }
 
             if (this.lastBuyPrice != 0) {
             this.currentTarget = roundToTwo(this.lastBuyPrice + (this.lastBuyPrice * 0.01));    
             }
-        }, 25000);
+        }, 60000);
     }
  
     async cheackRSI() {
@@ -310,22 +345,20 @@ class Robot {
 }
 
     async buy() {
-        const buyOrder = await newOrder(this.syngal, 'BUY', this.quantity_, 'MARKET', this.currentValor);
-        if (buyOrder.msg == 'Order placed successfully') {
-            this.havecurrency = true;
-            this.lastBuyPrice = this.currentValor
-            const insert = await insertOrder(this.syngal, 'BUY', this.currentValor, this.quantity_ , 'MARKET');
-            console.log(insert);
+        console.log('Comprando ' + this.quantity_ + ' ' + this.syngal);
+       const buyOrder = await newOrder(this.syngal, this.quantity_, 'BUY', 'LIMIT',  this.currentValor);
+         if (buyOrder.orderId.length > 0) {
+            this.haveorder = true;
+            const insert = await insertOrder(this.syngal, 'BUY', this.currentValor, this.quantity_ , 'LIMIT');
         }
-
     }
 
     async sell() {
-        const sellOrder = await newOrder(this.syngal, 'SELL', this.quantity_, 'MARKET', this.currentValor);
-        if (sellOrder.msg == 'Order placed successfully') {
-            this.havecurrency = false;
-            const insert = await insertOrder(this.syngal, 'SELL', this.currentValor, this.quantity_ , 'MARKET');
-            console.log(insert);
+        console.log('Vendendo ' + this.quantity_ + ' ' + this.syngal);
+        const sellOrder = await newOrder(this.syngal, this.quantity_, 'SELL', 'LIMIT',  this.currentValor);
+        if (sellOrder.orderId.length > 0) {
+            this.haveorder = true;
+            const insert = await insertOrder(this.syngal, 'SELL', this.currentValor, this.quantity_ , 'LIMIT');
         }
     }
 
@@ -344,22 +377,26 @@ class Robot {
 
     }
 
-    async checkOrder(symbol) {
+    async checkOrderActive(symbol) {
+        setInterval( async () => {
         console.log('Verificando se possui a ordem');
-        const result = await checkHaveOrder(symbol);   
+        const result = await checkHaveOrder(this.syngal);   
         console.log(result)    
         if (result.length > 0) {
             this.haveorder = 'true';
             console.log('Tem ordem', this.haveorder);
+            this.orderId = result.orderId
         } else {
             this.haveorder = false;
             console.log('Tem ordem', this.haveorder);
         }
         console.log(this.haveorder, 'Check Order');
+        }, 60000);
     }
 
+
     async cancelOrder(symbol) {
-        const result = await cancallAllOpenOrder(symbol);
+        const result = await cancallAllOpenOrder(this.sygnal);
         console.log(result);
         
     }

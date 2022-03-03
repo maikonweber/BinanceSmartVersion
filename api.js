@@ -50,9 +50,9 @@ async function newOCO(symbol, quantity, price, side = 'BUY', stopPrice = 0, stop
         symbol : symbol, 
         side : side, 
         quantity : quantity,
-        stopPrice : stopPrice,
-        stopLimitPrice : stopLimitPrice,
-        price: price,
+        stopPrice : stopPrice, // Segundo menor valor 
+        stopLimitPrice : stopLimitPrice, // Terceiro menor valor
+        price: price, // Menor Valor
         stopLimitTimeInForce: timeInForce
     };
 
@@ -140,19 +140,30 @@ async function ifHaveCoin(symbol) {
     const coin = account.balances.filter(coin => symbol.indexOf(coin.asset) > -1);
     const coin_list = coin.map(coin => coin.asset);
     
-    return coin;
-    };
 
+
+    return coin;
+};
+
+// CheckOrder of id order
+async function checkOrderById(symbol = 'BTCBUSD', orderId) {
+    return privateCall('/v3/order', {symbol, orderId}, 'GET');
+
+};
+    
+  
 async function allOrders(symbol = 'BTCBUSD') {
     return privateCall('/v3/allOrders', {symbol}, 'GET');
-}
+};
 
-// (async () => {
-//     const symbol = 'BTCBUSD';
-//    const account = await accountInfo();
-//    console.log(account);
+(async () => {
+
+   const neh = await ifHaveCoin('MATICBUSD');
+
+    // console.log(neh);
+
    
-// })();
+})();
 
 module.exports = {
     time, 
@@ -167,5 +178,6 @@ module.exports = {
     ifHaveCoin,
     checkHaveOrder,
     newOCO,
+  
     allOrders,
 };

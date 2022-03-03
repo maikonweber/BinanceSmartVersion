@@ -2,8 +2,8 @@
 {
 	"apps": [
 		{
-			"name": "teste bot",
-			"script" : "run.js",
+			"name": "binance",
+			"script" : "init.js",
 			"node_args" : "-r dotenv/config"
 
 		}

@@ -164,7 +164,7 @@ class Robot {
 
         
 
-        }, 500000);
+        }, 100000);
     }
 
     async getTendecia() {

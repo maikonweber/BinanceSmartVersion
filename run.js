@@ -9,7 +9,7 @@ const { roundToTwo } = require('./candles.js');
 const { allOrders } = require('./api.js');
 const { insertOrder } = require('./db.js');
 const { verifyLastOrder } = require('./db.js');
-const sendTelegram = require('./telegram.js');
+const { sendTelegram } = require('./telegram.js');
 
 
 
@@ -360,7 +360,7 @@ class Robot {
     async buy() {
         console.log('Comprando ' + this.quantity_ + ' ' + this.syngal);
        const buyOrder = await newOrder(this.syngal, this.quantity_, 'BUY', 'LIMIT',  this.currentValor);
-       sendTelegram('Comprando ' + this.quantity_ + ' ' + this.syngal);
+      const send = await sendTelegram('Comprando ' + this.quantity_ + ' ' + this.syngal);
          if (buyOrder.orderId.length > 0) {
             this.haveorder = true;
             const insert = await insertOrder(this.syngal, 'BUY', this.currentValor, this.quantity_ , 'LIMIT');
@@ -370,7 +370,7 @@ class Robot {
     async sell() {
         console.log('Vendendo ' + this.quantity_ + ' ' + this.syngal);
         const sellOrder = await newOrder(this.syngal, this.quantity_, 'SELL', 'LIMIT',  this.currentValor);
-        sendTelegram('Comprando ' + this.quantity_ + ' ' + this.syngal, 'Venda', this.currentValor, 'Valor de Compra', this.lastBuyPrice, 
+        const send = await sendTelegram('Comprando ' + this.quantity_ + ' ' + this.syngal, 'Venda', this.currentValor, 'Valor de Compra', this.lastBuyPrice, 
         'quantidade x valor de compra', this.quantity_ * this.lastBuyPrice, 'quantidade x valor de venda', this.quantity_ * this.currentValor);
         if (sellOrder.orderId.length > 0) {
             this.haveorder = true;

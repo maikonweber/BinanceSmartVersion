@@ -8,11 +8,19 @@ const bot = new TelegramBot(token, {polling: false});
 
 bot.sendMessage(1830205937, 'Hello World!');
 
-export default function sendTelegram (msg) {
+async function sendTelegram (msg) {
 
     bot.sendMessage(1830205937, msg);
     
 }
+
+module.exports = {
+    sendTelegram
+}
+
+
+
+
 
 
 // Send message to a chat

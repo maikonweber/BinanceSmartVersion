@@ -8,6 +8,7 @@
     "run": "node -r dotenv/config api.js",
     "dev": "electron . dotenv/config",
     "start": "node -r dotenv/config init.js",
+    "pm" : "pm2 -r dotenv/config init.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",

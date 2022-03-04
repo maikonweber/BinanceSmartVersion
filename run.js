@@ -78,7 +78,7 @@ class Robot {
         this.getTendecia();    
         this.getStrem(); 
         this.cheackRSI();   
-        this.console__();
+        // this.console__();
         this.setStopCurrentTarget();
         // this.analictEntry();  
         this.cheackAmount();  
@@ -164,7 +164,7 @@ class Robot {
 
         
 
-        }, 75000);
+        }, 500000);
     }
 
     async getTendecia() {
@@ -179,9 +179,14 @@ class Robot {
         }, 30000);
 }
     async analictEntry() {       
+            console.log('Analizando entrada', this.CurrentTime);
+            console.log(`Analisando a Entrada de ${this.sygnal}`);
+            console.log(`Valor atual: ${this.currentValor}`);
+            console.log(`Valor de Suporte: ${this.suporte}`);
+            console.log(`Valor de Resistencia: ${this.resistencia}`);
             if (this.havecurrency == false) {
                 console.log('Não tem moeda');
-              this.analictBuy();
+                this.analictBuy();
             } else {
                 console.log('Tem moeda');
               this.analictSell();

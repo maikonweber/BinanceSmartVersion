@@ -158,7 +158,9 @@ async function allOrders(symbol = 'BTCBUSD') {
 
 (async () => {
 
-   const neh = await ifHaveCoin('MATICBUSD');
+    const allOrder = await allOrders('MATICBUSD');
+    console.log(allOrder);
+    
 
     // console.log(neh);
 

@@ -360,10 +360,12 @@ class Robot {
     async buy() {
         console.log('Comprando ' + this.quantity_ + ' ' + this.syngal);
         const buyOrder = await newOrder(this.syngal, this.quantity_, 'BUY', 'LIMIT',  this.currentValor);
-        const send = await sendTelegram('Comprando ' + this.quantity_ + ' ' + this.syngal);
-        this.lastBuyPrice = this.currentValor;
+       
+        
          if (buyOrder.orderId.length > 0) {
             this.haveorder = true;
+            this.lastBuyPrice = this.currentValor;
+            const send = await sendTelegram('Comprando ' + this.quantity_ + ' ' + this.syngal);
             const insert = await insertOrder(this.syngal, 'BUY', this.currentValor, this.quantity_ , 'LIMIT');
         }
     }
@@ -371,10 +373,11 @@ class Robot {
     async sell() {
         console.log('Vendendo ' + this.quantity_ + ' ' + this.syngal);
         const sellOrder = await newOrder(this.syngal, this.quantity_, 'SELL', 'LIMIT',  this.currentValor);
-        const send = await sendTelegram('Comprando ' + this.quantity_ + ' ' + this.syngal, 'Venda', this.currentValor, 'Valor de Compra', this.lastBuyPrice, 
-        'quantidade x valor de compra', this.quantity_ * this.lastBuyPrice, 'quantidade x valor de venda', this.quantity_ * this.currentValor);
+       
         if (sellOrder.orderId.length > 0) {
             this.haveorder = true;
+            const send = await sendTelegram('Comprando ' + this.quantity_ + ' ' + this.syngal, 'Venda', this.currentValor, 'Valor de Compra', this.lastBuyPrice, 
+            'quantidade x valor de compra', this.quantity_ * this.lastBuyPrice, 'quantidade x valor de venda', this.quantity_ * this.currentValor);
             const insert = await insertOrder(this.syngal, 'SELL', this.currentValor, this.quantity_ , 'LIMIT');
         }
     }
@@ -416,6 +419,12 @@ class Robot {
         const result = await cancallAllOpenOrder(this.sygnal);
         console.log(result);
         
+    }
+
+    async checkLastBuyPrice() {
+        setInterval( async () => {
+            console.log(this.lastBuyPrice);
+        }, 60000);
     }
 
     async getAllOrder(symbol) {

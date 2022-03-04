@@ -180,7 +180,7 @@ class Robot {
 }
     async analictEntry() {       
             console.log('Analizando entrada', this.CurrentTime);
-            console.log(`Analisando a Entrada de ${this.sygnal}`);
+            console.log(`Analisando a Entrada de ${this.syngal}`);
             console.log(`Valor atual: ${this.currentValor}`);
             console.log(`Valor de Suporte: ${this.suporte}`);
             console.log(`Valor de Resistencia: ${this.resistencia}`);
@@ -189,24 +189,30 @@ class Robot {
                 this.analictBuy();
             } else {
                 console.log('Tem moeda');
-              this.analictSell();
+                console.log(this.setStopLoss, "setStopLoss");
+                this.analictSell();
             }
     }
 
     async analictSell() {
         console.log('Analisando Venda')
+        console.log('Valor atual: ', this.currentValor, 'Valor de Compra: ', this.lastBuyPrice);
+        console.log('Valor de Target', this.currentTarget);
         if (this.currentValor >= this.resistencia && this.lastRSI > 45) {
             this.cancelOrder();
             console.log('Venda Resistencia');
             this.sell();
-           } else if (this.currentValor <= this.stopLoss) {
+           } else if (this.currentValor <= this.setStopLoss && this.lastRSI < 45) {
             this.cancelOrder();
             console.log('Venda STOPLOSS');
+            console.log(this.setStopLoss, "stopLoss");
             this.sell();
            } else if (this.currentRSI > 78) {
             console.log('Venda currentRSI > 78');
             this.cancelOrder();
             this.sell();  
+           } else {
+            console.log('Não vendendou pois não atingiu condição');
            }
     }
 
@@ -252,6 +258,7 @@ class Robot {
 
         } else {
             console.log('Já tem ordem em andamento');
+            console.log(this.setStopLoss , "setStopLoss"); 
             if (this.currentValor <= this.stopLoss) {
                 console.log('Venda STOPLOSS');
                 this.cancelOrder();
@@ -315,7 +322,7 @@ class Robot {
         // Round to three decimal places
         setInterval( async () => {
             if (this.lastBuyPrice != 0) {   
-            this.stopLoss = roundToTwo(this.lastBuyPrice - (this.lastBuyPrice * 0.0075));
+            this.stopLoss = roundToTwo(this.lastBuyPrice - (this.lastBuyPrice * 0.0075)); 
             }
 
             if (this.lastBuyPrice != 0) {

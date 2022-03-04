@@ -6,13 +6,15 @@ const token = '5189315995:AAF7Ei5ozq6kHLSZTWHS_Xjy0ku-u-cxmfc';
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: false});
 
-bot.sendMessage(1830205937, 'Hello World!');
+
+// comente 
 
 async function sendTelegram (msg) {
-
+    console.log("Enviando mensagem a Telegram");
     bot.sendMessage(1830205937, msg);
     
 }
+
 
 module.exports = {
     sendTelegram

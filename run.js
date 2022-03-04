@@ -361,6 +361,7 @@ class Robot {
         console.log('Comprando ' + this.quantity_ + ' ' + this.syngal);
        const buyOrder = await newOrder(this.syngal, this.quantity_, 'BUY', 'LIMIT',  this.currentValor);
       const send = await sendTelegram('Comprando ' + this.quantity_ + ' ' + this.syngal);
+      this.lastBuyPrice = this.currentValor;
          if (buyOrder.orderId.length > 0) {
             this.haveorder = true;
             const insert = await insertOrder(this.syngal, 'BUY', this.currentValor, this.quantity_ , 'LIMIT');

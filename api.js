@@ -158,11 +158,6 @@ async function allOrders(symbol = 'BTCBUSD') {
 
 (async () => {
 
-    const allOrder = await allOrders('MATICBUSD');
-    console.log(allOrder);
-    
-
-    // console.log(neh);
 
    
 })();

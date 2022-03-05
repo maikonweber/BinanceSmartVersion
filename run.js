@@ -108,15 +108,11 @@ class Robot {
         setInterval(async () => {
             console.log(this.resistencia, "resistencia");
             console.log(this.suporte, "suporte");
-            console.log(this.tendencia, "tendencia");
             console.log(this.currentValor, "currentValor");
-            console.log(this.lastRSI, "lastRSI");
-            console.log(this.lastRSImedia, "lastRSImedia");
-            console.log(this.quantity_, "amount");
-            console.log(this.setStopLoss, "setStopLoss");
-            console.log(this.currentTarget, "currentTarget");
+           const send = await sendTelegram(`${this.syngal} - ${this.currentValor}`) 
+           const send2 = await sendTelegram(`Analisando a Entrada de ${this.syngal}`)
 
-        }, 30000);
+        }, 60000);
     }
 
     async getSuporte() {
@@ -180,7 +176,8 @@ class Robot {
         }, 30000);
 }
     async analictEntry() {       
-            console.log('Analizando entrada', this.CurrentTime);
+            const send2 = await sendTelegram(`Analisando a Entrada de ${this.syngal}`)
+            const send3 = await sendTelegram('Analizando entrada', this.CurrentTime);
             console.log(`Analisando a Entrada de ${this.syngal}`);
             console.log(`Valor atual: ${this.currentValor}`);
             console.log(`Valor de Suporte: ${this.suporte}`);

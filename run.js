@@ -125,7 +125,7 @@ class Robot {
      
         
             if (this.time == '1m') {
-            this.suporte = this.suporte10 + (this.suporte10 + this.suporte10 * 0.00007);
+            this.suporte = this.suporte10 + (this.suporte10 + roundToTwo(this.suporte10 * 0.007));
             } else if (this.time == '5m') {
                 this.suporte = this.suporte20
             } else if (this.time == '15m') {

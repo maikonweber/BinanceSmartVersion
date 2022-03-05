@@ -364,7 +364,8 @@ class Robot {
          if (typeof buyOrder.orderId.length != 'undefined') {
             this.haveorder = true;
             this.lastBuyPrice = this.currentValor;
-            const send = await sendTelegram('Comprando ' + this.quantity_ + ' ' + this.syngal);
+            
+            const send = await sendTelegram('Comprando ' + this.quantity_ + ' ' + this.syngal + '\n' + 'Valor: ' + this.currentValor + '\n' + 'StopLoss: ' + this.stopLoss + '\n' + 'Suporte: ' + this.suporte + '\n' + 'Resistencia' + this.resistencia);
             const insert = await insertOrder(this.syngal, 'BUY', this.currentValor, this.quantity_ , 'LIMIT');
         }
     }
@@ -375,8 +376,8 @@ class Robot {
        
         if (sellOrder.orderId.length != 'undefined') {
             this.haveorder = true;
-            const send = await sendTelegram('Comprando ' + this.quantity_ + ' ' + this.syngal, 'Venda', this.currentValor, 'Valor de Compra', this.lastBuyPrice, 
-            'quantidade x valor de compra', this.quantity_ * this.lastBuyPrice, 'quantidade x valor de venda', this.quantity_ * this.currentValor);
+            const send = await sendTelegram('VENDENDO ' + this.quantity_ + ' ' + this.syngal, 'Venda');
+            const send2 = await sendTelegram ('Lucro' + this.currentValor - this.lastBuyPrice);
             const insert = await insertOrder(this.syngal, 'SELL', this.currentValor, this.quantity_ , 'LIMIT');
         }
     }

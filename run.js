@@ -205,7 +205,7 @@ class Robot {
             const send3 = await sendTelegram('Venda Stop Loss' + `${this.currentValor}`);
             console.log(this.setStopLoss, "stopLoss");
             this.sell();
-           } else if (this.currentRSI > 78) {
+           } else if (this.lastRSI || this.currentRSI >= 62) {
             const send4 = await sendTelegram(`Venda RSI: ${this.currentValor}`);
             console.log('Venda currentRSI > 78');
             this.cancelOrder();

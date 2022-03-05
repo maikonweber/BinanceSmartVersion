@@ -177,9 +177,10 @@ class Robot {
 }
     async analictEntry() {       
             const send2 = await sendTelegram(`Analisando a Entrada de ${this.syngal}`)
-            const send3 = await sendTelegram('Analizando entrada', this.CurrentTime);
+            const send3 = await sendTelegram(`Analizando entrada', ${this.CurrentTime}`);
             console.log(`Analisando a Entrada de ${this.syngal}`);
             console.log(`Valor atual: ${this.currentValor}`);
+            const send4 = await sendTelegram(`Analizando entrada, ${this.currentValor}, ${this.syngal}, ${this.CurrentTime}, ${this.resistencia}, ${this.suporte}, ${this.tendencia}`);
             console.log(`Valor de Suporte: ${this.suporte}`);
             console.log(`Valor de Resistencia: ${this.resistencia}`);
             if (this.havecurrency == false) {

@@ -125,7 +125,7 @@ class Robot {
      
         
             if (this.time == '1m') {
-            this.suporte = this.suporte10 + (this.suporte10 + roundToTwo(this.suporte10 * 0.007));
+            this.suporte = (this.suporte10 + roundToTwo(this.suporte10 * 0.007));
             } else if (this.time == '5m') {
                 this.suporte = this.suporte20
             } else if (this.time == '15m') {
@@ -280,7 +280,7 @@ class Robot {
     async cheackCurrency() {
         setInterval( async () => {
         const currency = await ifHaveCoin(this.syngal);
-        const send1 = await sendTelegram(`Verificando se tem moeda: ${currency}`);
+        const send1 = await sendTelegram(`Verificando se tem moeda: ${JSON.stringify(currency)}`);
         if (currency[0].free > 2) {
             this.havecurrency = true;
         } else {

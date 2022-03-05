@@ -125,7 +125,7 @@ class Robot {
      
         
             if (this.time == '1m') {
-            this.suporte = this.suporte10
+            this.suporte = this.suporte10 + (this.suporte10 + this.suporte10 * 0.00007);
             } else if (this.time == '5m') {
                 this.suporte = this.suporte20
             } else if (this.time == '15m') {
@@ -194,24 +194,25 @@ class Robot {
     }
 
     async analictSell() {
-        console.log('Analisando Venda')
-        console.log('Valor atual: ', this.currentValor, 'Valor de Compra: ', this.lastBuyPrice);
-        console.log('Valor de Target', this.currentTarget);
+        const send1 = await sendTelegram('Analisando Venda')
+        const send2 = await sendTelegram(`Valor atual: ', ${this.currentValor}, 'Valor de Compra:', ${this.lastBuyPrice}`  );
         if (this.currentValor >= this.resistencia && this.lastRSI > 45) {
             this.cancelOrder();
-            console.log('Venda Resistencia');
+            const send3 = await sendTelegram('Venda Resistencia');
             this.sell();
            } else if (this.currentValor <= this.setStopLoss && this.lastRSI < 45) {
             this.cancelOrder();
-            console.log('Venda STOPLOSS');
+            const send3 = await sendTelegram('Venda Stop Loss' + `${this.currentValor}`);
             console.log(this.setStopLoss, "stopLoss");
             this.sell();
            } else if (this.currentRSI > 78) {
+            const send4 = await sendTelegram(`Venda RSI: ${this.currentValor}`);
             console.log('Venda currentRSI > 78');
             this.cancelOrder();
             this.sell();  
            } else {
             console.log('Não vendendou pois não atingiu condição');
+            console.log(`Valor atual: ${this.currentValor}, Não atingiu condição`);
            }
     }
 
@@ -219,10 +220,12 @@ class Robot {
         console.log('Analisando Compra')
         if (this.currentValor <= this.suporte && this.lastRSI < 45)
         {
+            const send1 = await sendTelegram(`Compra Suporte: ${this.currentValor}`);
             console.log('Compra Suporte');
             this.cancelOrder();
             this.buy();
         } else {
+            const send2 = await sendTelegram(`Nao Comprou post valor atual: ${this.currentValor} ${this.suporte}`);	
             console.log(`Não comprou pois o valor atual ${this.currentValor} é maior que o suporte`, this.suporte , 'e o RSI é', this.lastRSI);
         }
     }
@@ -233,19 +236,23 @@ class Robot {
     if (this.haveorder == true) {
         if (this.currentValor >= (this.suporte + (this.suporte * 0.09))) {
             this.cancelOrder(); 
+            const send1 =  await sendTelegram(`Desistiu da compra, valor atual: ${this.currentValor}`);
         } else { 
             console.log("Não desistiu pois o valor atual é menor que o suporte");
+            const send2 = await sendTelegram(`Não desistiu pois o valor atual é menor que o suporte: ${this.currentValor}`);
         }
     } else if (this.haveorder == true && this.havecurrency == true ) { 
             if (this.currentValor <= (this.resistencia + (this.resistencia * 0.09))) {
+                console.log(`Desistiu desta Ordem de venda. Valor Atual', ${this.currentValor} Menor que variaçao de resistencia: ${(this.resistencia + (this.resistencia * 0.09))}`);
                 this.cancelOrder();
             }
         }
     else {
-        console.log('Não desistiu pois não há ordem');
+        const send3 = await sendTelegram(`Não desistiu pois não tem ordem de compra`);
+     
     }
 
-}, 60000);
+}, 80000);
    
 }
 
@@ -260,18 +267,20 @@ class Robot {
             console.log(this.setStopLoss , "setStopLoss"); 
             if (this.currentValor <= this.stopLoss) {
                 console.log('Venda STOPLOSS');
+                const send2 = await sendTelegram(`Venda STOPLOSS: ${this.currentValor}`);
                 this.cancelOrder();
                 this.sell();
                }
         }
 
-    }, 60000);
+    }, 35000);
 
     }
 
     async cheackCurrency() {
         setInterval( async () => {
         const currency = await ifHaveCoin(this.syngal);
+        const send1 = await sendTelegram(`Verificando se tem moeda: ${currency}`);
         if (currency[0].free > 2) {
             this.havecurrency = true;
         } else {
@@ -327,6 +336,7 @@ class Robot {
             if (this.lastBuyPrice != 0) {
             this.currentTarget = roundToTwo(this.lastBuyPrice + (this.lastBuyPrice * 0.01));    
             }
+
         }, 60000);
     }
  
@@ -357,26 +367,33 @@ class Robot {
 
     async buy() {
         console.log('Comprando ' + this.quantity_ + ' ' + this.syngal);
+        try {
         const buyOrder = await newOrder(this.syngal, this.quantity_, 'BUY', 'LIMIT',  this.currentValor);
-        
-         if (typeof buyOrder.orderId.length != 'undefined') {
-            this.haveorder = true;
-            this.lastBuyPrice = this.currentValor;
-            
-            const send = await sendTelegram('Comprando ' + this.quantity_ + ' ' + this.syngal + '\n' + 'Valor: ' + this.currentValor + '\n' + 'StopLoss: ' + this.stopLoss + '\n' + 'Suporte: ' + this.suporte + '\n' + 'Resistencia' + this.resistencia);
-            const insert = await insertOrder(this.syngal, 'BUY', this.currentValor, this.quantity_ , 'LIMIT');
+        this.haveorder = true;
+        this.lastBuyPrice = this.currentValor;
+        const send = await sendTelegram(`Comprando ${this.quantity_} ${this.syngal} ${this.currentValor}` );
+        } catch (err) {
+
         }
     }
 
     async sell() {
         console.log('Vendendo ' + this.quantity_ + ' ' + this.syngal);
+        try {
         const sellOrder = await newOrder(this.syngal, this.quantity_, 'SELL', 'LIMIT',  this.currentValor);
-       
-        if (sellOrder.orderId.length != 'undefined') {
-            this.haveorder = true;
-            const send = await sendTelegram('VENDENDO ' + this.quantity_ + ' ' + this.syngal, 'Venda');
-            const send2 = await sendTelegram ('Lucro' + this.currentValor - this.lastBuyPrice);
-            const insert = await insertOrder(this.syngal, 'SELL', this.currentValor, this.quantity_ , 'LIMIT');
+        this.haveorder = true;
+        const send = await sendTelegram(`VENDENDO = ${this.quantity_} ${this.syngal} ${this.currentValor}` );
+        const send2 = await sendTelegram (`Lucro' + ${(this.currentValor - this.lastBuyPrice) * this.quantity_}`);
+        try {
+        const insert = await insertOrder(this.syngal, 'SELL', this.currentValor, this.quantity_ , 'LIMIT');
+        
+        } catch (err) {
+            console.log(err);
+            const sent8 = await sendTelegram('Erro na inserção de ordem de venda no Banco');
+        }
+    } catch (err){
+        console.log(err);
+        const sent8 = await sendTelegram('Erro na execução ordem de venda no Banco');
         }
     }
 
@@ -397,16 +414,17 @@ class Robot {
 
     async checkOrderActive(symbol) {
         setInterval( async () => {
-        console.log('Verificando se possui a ordem');
+        const send2 = sendTelegram('Verificando se possui a ordem');
         const result = await checkHaveOrder(this.syngal);   
         console.log(result)    
         if (result.length > 0) {
             this.haveorder = 'true';
-            console.log('Tem ordem', this.haveorder);
+            const send2 = sendTelegram('Possui Ordem Ativa');
             this.orderId = result.orderId
         } else {
             this.haveorder = false;
             console.log('Tem ordem', this.haveorder);
+            const send3 = sendTelegram('Nao Possui Ordem Ativa');
         }
         console.log(this.haveorder, 'Check Order');
         }, 60000);

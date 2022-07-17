@@ -51,5 +51,5 @@ module.exports = {
 //   const chatId = msg.chat.id;
 
 //   // send a message to the chat acknowledging receipt of their message
-//   bot.sendMessage(chatId, 'Received your message 1', chatId);
+//   bot.sendMessage(chatId, 'Received your message 1', :chatId);
 // });

@@ -14,7 +14,7 @@ services:
       - POSTGRES_MULTIPLE_EXTENSIONS=postgis,hstore
     
     ports:
-      - "5532:5432"
+      - "5832:5432"
     volumes:
       - ./data/postgres:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql

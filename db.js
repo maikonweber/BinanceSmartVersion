@@ -6,7 +6,7 @@ var client = new pg.Client({
   user: "binance",
   password: "binance",
   database: "binance",
-  port: 5532,
+  port: 5832,
   host: "localhost",
   ssl: false
 });

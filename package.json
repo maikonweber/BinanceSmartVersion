@@ -8,7 +8,7 @@
     "run": "node -r dotenv/config api.js",
     "dev": "electron . dotenv/config",
     "start": "node -r dotenv/config init.js",
-    "pm" : "pm2 -r dotenv/config init.js",
+    "pm": "pm2 -r dotenv/config init.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -16,6 +16,7 @@
   "dependencies": {
     "@material-ui/icons": "^4.11.2",
     "axios": "^0.24.0",
+    "bot-brother": "^2.1.5",
     "d3": "^7.2.0",
     "dotenv": "^10.0.0",
     "fib-retracement": "^0.0.4",

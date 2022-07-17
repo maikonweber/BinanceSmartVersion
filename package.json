@@ -22,6 +22,7 @@
     "fib-retracement": "^0.0.4",
     "moment": "^2.29.1",
     "node-telegram-bot-api": "^0.56.0",
+    "node-webhooks": "^1.4.2",
     "pg": "^8.7.1",
     "technicalindicators": "^3.1.0",
     "tulind": "^0.8.20",

@@ -3,11 +3,11 @@ const querystring = require('querystring');
 const crypto = require('crypto');
 const moment = require('moment');
 const WebSocket = require('ws');
+require('dotenv').config()
 const apiKey = process.env.API_KEY;
 const apiSecret = process.env.API_SECRET;
 const Api_url = process.env.API_URL;
-
-
+console.log(process.env)
 
 const roundToTwo = num => +(Math.round(num + "e+2")  + "e-2");
 
@@ -178,3 +178,5 @@ module.exports = {
   
     allOrders,
 };
+
+

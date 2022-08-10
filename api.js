@@ -157,7 +157,7 @@ async function allOrders(symbol = 'BTCBUSD') {
 };
 
 (async () => {
-
+  await accountInfo()
 
    
 })();

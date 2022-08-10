@@ -1,6 +1,6 @@
-const {Robot}  = require('./run.js');
+const {Robot}  = require('./run');
 
-const app = new Robot(15, 'MATICBUSD', '1m', 30);
+const app = new Robot(15, 'BTCBUSD', '15m', 30);
 
 app.Init();
 

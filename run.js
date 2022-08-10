@@ -25,21 +25,16 @@ class Robot {
         this.syngal = syngal;
         this.time = time;
         this.interval = interval;
-        // Suporte 
+        this.currentSuport = 0;
+        this.currentResistencia = 0;
         this.suporte = 0;
         this.suporte5 = 0;
         this.suporte10 = 0;
         this.suporte100= 0;
-        this.suporte500 = 0;
-        this.suporte1000 = 0;
-        this.suporte5000 = 0;
         this.resistencia = 0;
         this.resistencia5 = 0;
         this.resistencia10 = 0;
         this.resistencia100 = 0;
-        this.resistencia500 = 0;
-        this.resistencia1000 = 0;
-        this.resistencia5000 = 0;
         // Resistencia
         this.resistencia = 0;
         // Melhor preço de compra 
@@ -71,224 +66,156 @@ class Robot {
     }
 
     async Init() {
-        this.statist();
-        this.checkOrderActive();
-        this.checkOrder();
-        this.cheackCurrency();
-        this.getSuporte();
-        this.getTendecia();    
-        this.getStrem(); 
-        this.cheackRSI();   
-        // this.console__();
-        this.setStopCurrentTarget();
-        // this.analictEntry();  
-        this.cheackAmount();  
-        this.giveUp();   
+
+        Promise.all([this.statist(), this.getSuporte(), this.console__()]).then(() => {
+                console.log('Todas as Promises foram resolvidas');
+            }).catch(err => {
+                console.log('Erro ao resolver as Promises');
+            }).finally(() => {
+                console.log('Fim do programa');
+            });
+    
+
+        // this.statist();
+        //  this.checkOrder();
+        //  this.cheackCurrency();
+        //  this.getSuporte();
+        //  this.getTendecia();    
+        //  this.getStrem(); 
+        //  this.cheackRSI();   
+        //  this.console__();
+        // this.setStopCurrentTarget();
+        // // this.analictEntry();  
+        // this.cheackAmount();  
+        // this.giveUp();   
     }
 
     async statist() {
         console.log('statist');
-        setInterval(async () => {
+        while (true) {
             let candle = await getCandleStatistc(this.syngal, this.time, this.interval);
-            
             this.lastStactis = candle;
             console.log("\x1b[31m",'Atualizando valores de ', this.syngal);
             this.CurrentTime = this.lastStactis.time;
-
             if (this.static.length > 99) {
                 this.static.shift();
             }
-
-            }, 60000);
+            await this.sleep(35000);    
+        }
 }
 
     async console__() {
         
-// Print all properties of the object
-        setInterval(async () => {
+// Print all propertiesm,,,,,,,,,,,,,,,,,,,,,,, of the object
+       while (true) {
             console.log(this.resistencia, "resistencia");
             console.log(this.suporte, "suporte");
-            console.log(this.currentValor, "currentValor");
-           const send = await sendTelegram(`${this.syngal} - ${this.currentValor}`) 
-           const send2 = await sendTelegram(`Analisando a Entrada de ${this.syngal}`)
+            console.log(this.currentSuport, "currentSuport");
+            console.log(this.currentResistencia, "currentResistencia");
 
-        }, 60000);
+        await this.sleep(35000);
+        }
+    }
+
+    async sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+
+    async checkOrder() { 
+        while (true) {
+        const order = await checkHaveOrder(this.syngal);
+            if (order.length > 0) {
+                this.haveorder = true;
+                this.orderId = order[0].id;
+                console.log('Tem ordem ativa');
+            } else {
+                this.haveorder = false;
+                console.log('Não tem ordem ativa');
+            }
+            await this.sleep(45000);
+        }
+    }
+
+    async cheackCurrency() {
+        while (true) {
+            const currency = await ifHaveCoin(this.syngal);
+            if (currency.length > 0) {
+                this.havecurrency = true;
+                console.log('Tem moeda');
+            } else {
+                this.havecurrency = false;
+                console.log('Não tem moeda');
+            }
+        await this.sleep(45000);
+        } 
     }
 
     async getSuporte() {
-        setInterval( async () => {
-            console.log('Atualizando valores de ', this.syngal); 
-            this.suporte10 = this.lastStactis.supAndRes10.Suporte;
-            this.suporte20 = this.lastStactis.supAndRes20.Suporte;
-            this.suporte50 = this.lastStactis.supAndRes50.Suporte;
-            this.suporte100= this.lastStactis.supAndRes100.Suporte;
-     
-        
-            if (this.time == '1m') {
-            this.suporte = (this.suporte10 + roundToTwo(this.suporte10 * 0.007));
-            } else if (this.time == '5m') {
-                this.suporte = this.suporte20
-            } else if (this.time == '15m') {
-                this.suporte = this.suporte50
-            } else if (this.time == '30m') {
-                this.suporte = this.suporte100
-            } else {
-                console.log('Erro ao atualizar Suporte')
+            while (true) {
+                const candle = await getCandleStatistc(this.syngal, this.time, this.interval);
+                this.lastStactis = candle;
+                this.CurrentTime = this.lastStactis.time;
+                console.log(this.lastStactis)
+                console.log("\x1b[31m",'Atualizando valores de ', this.syngal);
+                console.log(this.lastStactis.time, "time");
+                console.log(this.lastStactis.close, "close");
+                console.log(this.lastStactis.high, "high");
+                
+                deph(time)()
+
+                const deph = {
+                    '1m' : () => {
+                        this.currentResistencia = this.lastStactis.supAndRes10.Resistencia;
+                        this.currentSuport = this.lastStactis.supAndRes10.Suporte;
+                    },
+                    '5m' : () => {
+                        this.currentResistencia = this.lastStactis.supAndRes5.Resistencia;
+                        this.currentSuport = this.lastStactis.supAndRes5.Suporte;
+
+                    },
+                    '15m' : () => {
+                        this.currentResistencia = this.lastStactis.supAndRes20.Resistencia;
+                        this.currentSuport = this.lastStactis.supAndRes20.Suporte;
+                    },
+                    '30m' : () => {
+                        this.currentResistencia = this.lastStactis.supAndRes50.Resistencia;
+                        this.currentSuport = this.lastStactis.supAndRes50.Suporte;
+                    },
+                    '1h' : () => {
+                        this.currentResistencia = this.lastStactis.supAndRes100.Resistencia;
+                        this.currentSuport = this.lastStactis.supAndRes100.Suporte;
+                    }
+                }
+
+                
+                this.suporte = this.lastStactis.supAndRes10.Suporte;
+                this.resistencia = this.lastStactis.supAndRes10.Resistencia;
+
+                this.suporte5 = this.lastStactis.supAndRes20.Suporte;
+                this.resistencia5 = this.lastStactis.supAndRes20.Resistencia;
+
+                this.suporte10 = this.lastStactis.supAndRes50.Suporte;
+                this.resistencia10 = this.lastStactis.supAndRes50.Resistencia;
+
+                this.suporte100 = this.lastStactis.supAndRes100.Suporte;
+                this.resistencia100 = this.lastStactis.supAndRes100.Resistencia;
+
+                await this.sleep(45000);
             }
-
-
-            this.resistencia10 = this.lastStactis.supAndRes10.Resistencia;
-            this.resistencia20 = this.lastStactis.supAndRes20.Resistencia;            
-            this.resistencia50= this.lastStactis.supAndRes50.Resistencia;
-            this.resistencia100= this.lastStactis.supAndRes100.Resistencia;
-   
-
-            if (this.time == '1m') {
-                console.log('Tempo definido 1m');
-            this.resistencia = this.resistencia10
-            } else if (this.time == '5m') {
-                console.log('Tempo definido 5m');
-                this.resistencia = this.resistencia20
-            } else if (this.time == '15m') {
-                console.log('Tempo definido 15m');
-                this.resistencia = this.resistencia50
-            } else if (this.time == '30m') {
-                console.log('Tempo definido 30m');
-                this.resistencia = this.resistencia100
-            } else {
-                console.log('Erro ao atualizar Resistencia')
-            }
-
-        
-
-        }, 100000);
     }
 
     async getTendecia() {
         setInterval( async () => {
         if (this.lastStactis.MMA10 > this.lastStactis.MMA30) {
-            this.tendencia = true;
-        
+            this.tendencia = true;     
         }
         else {
             this.tendencia = false;
         }
         }, 30000);
 }
-    async analictEntry() {       
-            const send2 = await sendTelegram(`Analisando a Entrada de ${this.syngal}`)
-            const send3 = await sendTelegram(`Analizando entrada', ${this.CurrentTime}`);
-            console.log(`Analisando a Entrada de ${this.syngal}`);
-            console.log(`Valor atual: ${this.currentValor}`);
-            const send4 = await sendTelegram(`Analizando entrada, ${this.currentValor}, ${this.syngal}, ${this.CurrentTime}, ${this.resistencia}, ${this.suporte}, ${this.tendencia}`);
-            console.log(`Valor de Suporte: ${this.suporte}`);
-            console.log(`Valor de Resistencia: ${this.resistencia}`);
-            if (this.havecurrency == false) {
-                console.log('Não tem moeda');
-                this.analictBuy();
-            } else {
-                console.log('Tem moeda');
-                console.log(this.setStopLoss, "setStopLoss");
-                this.analictSell();
-            }
-    }
 
-    async analictSell() {
-        const send1 = await sendTelegram('Analisando Venda')
-        const send2 = await sendTelegram(`Valor atual: ', ${this.currentValor}, 'Valor de Compra:', ${this.lastBuyPrice}`  );
-        if (this.currentValor >= this.resistencia && this.lastRSI > 45) {
-            this.cancelOrder();
-            const send3 = await sendTelegram('Venda Resistencia');
-            this.sell();
-           } else if (this.currentValor <= this.setStopLoss && this.lastRSI < 45) {
-            this.cancelOrder();
-            const send3 = await sendTelegram('Venda Stop Loss' + `${this.currentValor}`);
-            console.log(this.setStopLoss, "stopLoss");
-            this.sell();
-           } else if (this.lastRSI || this.currentRSI >= 62) {
-            const send4 = await sendTelegram(`Venda RSI: ${this.currentValor}`);
-            console.log('Venda currentRSI > 78');
-            this.cancelOrder();
-            this.sell();  
-           } else {
-            console.log('Não vendendou pois não atingiu condição');
-            console.log(`Valor atual: ${this.currentValor}, Não atingiu condição`);
-           }
-    }
-
-    async analictBuy() {
-        console.log('Analisando Compra')
-        if (this.currentValor <= this.suporte && this.lastRSI < 45)
-        {
-            const send1 = await sendTelegram(`Compra Suporte: ${this.currentValor}`);
-            console.log('Compra Suporte');
-            this.cancelOrder();
-            this.buy();
-        } else {
-            const send2 = await sendTelegram(`Nao Comprou post valor atual: ${this.currentValor} ${this.suporte}`);	
-            console.log(`Não comprou pois o valor atual ${this.currentValor} é maior que o suporte`, this.suporte , 'e o RSI é', this.lastRSI);
-        }
-    }
-
-    async giveUp() {
-        setInterval(async () => {
-        console.log('Desistindo da compra');
-    if (this.haveorder == true) {
-        if (this.currentValor >= (this.suporte + (this.suporte * 0.09))) {
-            this.cancelOrder(); 
-            const send1 =  await sendTelegram(`Desistiu da compra, valor atual: ${this.currentValor}`);
-        } else { 
-            console.log("Não desistiu pois o valor atual é menor que o suporte");
-            const send2 = await sendTelegram(`Não desistiu pois o valor atual é menor que o suporte: ${this.currentValor}`);
-        }
-    } else if (this.haveorder == true && this.havecurrency == true ) { 
-            if (this.currentValor <= (this.resistencia + (this.resistencia * 0.09))) {
-                console.log(`Desistiu desta Ordem de venda. Valor Atual', ${this.currentValor} Menor que variaçao de resistencia: ${(this.resistencia + (this.resistencia * 0.09))}`);
-                this.cancelOrder();
-            }
-        }
-    else {
-        const send3 = await sendTelegram(`Não desistiu pois não tem ordem de compra`);
-     
-    }
-
-}, 80000);
-   
-}
-
-    async checkOrder() {
-        setInterval( async () => {
-        if (this.haveorder == false) {
-            console.log('Não há ordem');
-            this.analictEntry();
-
-        } else {
-            console.log('Já tem ordem em andamento');
-            console.log(this.setStopLoss , "setStopLoss"); 
-            if (this.currentValor <= this.stopLoss) {
-                console.log('Venda STOPLOSS');
-                const send2 = await sendTelegram(`Venda STOPLOSS: ${this.currentValor}`);
-                this.cancelOrder();
-                this.sell();
-               }
-        }
-
-    }, 35000);
-
-    }
-
-    async cheackCurrency() {
-        setInterval( async () => {
-        const currency = await ifHaveCoin(this.syngal);
-        const send1 = await sendTelegram(`Verificando se tem moeda: ${JSON.stringify(currency)}`);
-        if (currency[0].free > 2) {
-            this.havecurrency = true;
-        } else {
-            this.havecurrency = false;
-        }
-
-    }, 60000);
-    }
 
     async getStrem() {
         const time = '1m'
@@ -380,12 +307,12 @@ class Robot {
     async sell() {
         console.log('Vendendo ' + this.quantity_ + ' ' + this.syngal);
         try {
-        const sellOrder = await newOrder(this.syngal, this.quantity_, 'SELL', 'LIMIT',  this.currentValor);
+        //const sellOrder = await newOrder(this.syngal, this.quantity_, 'SELL', 'LIMIT',  this.currentValor);
         this.haveorder = true;
         const send = await sendTelegram(`VENDENDO = ${this.quantity_} ${this.syngal} ${this.currentValor}` );
         const send2 = await sendTelegram (`Lucro' + ${(this.currentValor - this.lastBuyPrice) * this.quantity_}`);
         try {
-        const insert = await insertOrder(this.syngal, 'SELL', this.currentValor, this.quantity_ , 'LIMIT');
+        // const insert = await insertOrder(this.syngal, 'SELL', this.currentValor, this.quantity_ , 'LIMIT');
         
         } catch (err) {
             console.log(err);
@@ -415,25 +342,14 @@ class Robot {
     async checkOrderActive(symbol) {
         setInterval( async () => {
         const send2 = sendTelegram('Verificando se possui a ordem');
-        const result = await checkHaveOrder(this.syngal);   
-        console.log(result)    
-        if (result.length > 0) {
-            this.haveorder = 'true';
-            const send2 = sendTelegram('Possui Ordem Ativa');
-            this.orderId = result.orderId
-        } else {
-            this.haveorder = false;
-            console.log('Tem ordem', this.haveorder);
-            const send3 = sendTelegram('Nao Possui Ordem Ativa');
-        }
-        console.log(this.haveorder, 'Check Order');
+        //const result = await checkHaveOrder(this.syngal);   
         }, 60000);
     }
 
 
     async cancelOrder(symbol) {
-        const result = await cancallAllOpenOrder(this.sygnal);
-        console.log(result);
+      //  const result = await cancallAllOpenOrder(this.sygnal);
+        //console.log(result);
         
     }
 

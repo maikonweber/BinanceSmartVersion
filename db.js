@@ -1,8 +1,7 @@
-var pg = require("pg");
+var { Pool, Client } = require("pg");
 
 
-
-var client = new pg.Client({
+var client = new Pool({
   user: "binance",
   password: "binance",
   database: "binance",
@@ -11,16 +10,15 @@ var client = new pg.Client({
   ssl: false
 });
 
-client.connect();
 
+async function insertOrder(symbol, side, price, quantity, ordertype, ) {
+    console.log('insertOrder');
+    const queryString = `INSERT INTO openorder (symbol, side, price, quantity, ordertype) 
+    VALUES ($1, $2, $3, $4, $5)`;
+    const values = [symbol, side, price, quantity, ordertype];
+    var result = await client.query(queryString, values);
+    console.log(result.rowCount);
 
-async function insertOrder(symbol, side, price, quantity, ordertype, stopprice, target) {
-    const client = await pool.connect()
-    var result = await client.query(`
-    INSERT INTO openorder (symbol, side, price, quantity, ordertype, stopprice, target) 
-    VALUES ($1, $2, $3, $4, $5, $6)`, 
-    [symbol, side, quantity, price, stopprice, target]);
-        
     return result;
 };
 
@@ -33,10 +31,8 @@ async function verifyLastOrder(pair, type, amount, price, stop, OCOgain, OCOloss
             order by timestamp desc`);
 
     return result;
-
 };
 
-   
 
 module.exports = {  
     insertOrder,

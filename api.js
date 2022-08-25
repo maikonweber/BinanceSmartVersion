@@ -12,11 +12,7 @@ console.log(process.env)
 const roundToTwo = num => +(Math.round(num + "e+2")  + "e-2");
 
 console.log(apiKey, apiSecret, Api_url);
-async function getStreamPrices(Symbol = 'maticbusd'){
-  
-    }
 
-    getStreamPrices();
      
 
 async function privateCall(path, data = {}, method = 'GET') {
@@ -40,6 +36,26 @@ async function privateCall(path, data = {}, method = 'GET') {
         console.log(err);
     }
 }
+
+
+async function futureOrder(symbol, quantity, side = 'BUY',  positionSide , price) {
+    const data  = {
+        symbol : symbol, // Symbol
+        side : side, // BUY or SELL
+        positionSide : positionSide, // LONG or SHORT
+        type : 'TRAILING_STOP_MARKET', // MARKET or LIMIT
+        quantity : quantity, // Quantity
+        price : price,// Price
+        timeInForce : 'GTC', // GTC, IOC, FOK -  No Mandatory
+        workingType : 'CONTRACT_PRICE', // 1 or 2 -  No Mandatory
+        callBackRate : 0.1,  // 0.1 or 0.2 -  No Mandatory
+        priceProtection : 0 // 0 or 1 -  No Mandatory   
+    };
+    
+     return privateCall('v1/order', data, 'POST');    
+
+} 
+
 
 async function cancallAllOpenOrder(symbol){
     return privateCall('/v3/openOrders', {symbol: symbol}, 'DELETE');
@@ -154,13 +170,10 @@ async function checkOrderById(symbol = 'BTCBUSD', orderId) {
   
 async function allOrders(symbol = 'BTCBUSD') {
     return privateCall('/v3/allOrders', {symbol}, 'GET');
-};
+})
 
-(async () => {
-  await accountInfo()
 
-   
-})();
+
 
 module.exports = {
     time, 
@@ -168,15 +181,14 @@ module.exports = {
     exchangeInfo,
     accountInfo,
     kline,
-    getStreamPrices,
     ticker,
     cancallAllOpenOrder,
     newOrder,
     ifHaveCoin,
     checkHaveOrder,
     newOCO,
-  
     allOrders,
+    futureOrder
 };
 
 

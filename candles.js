@@ -231,7 +231,6 @@ async function GetSupAndRes(sygnal = 'BTCBUSD', dephInterval = '50') {
       "Suporte" : roundToTwo(result[1])
    }
 
-   console.log(supRes)
    return supRes
     
 }

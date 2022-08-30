@@ -170,7 +170,8 @@ async function checkOrderById(symbol = 'BTCBUSD', orderId) {
   
 async function allOrders(symbol = 'BTCBUSD') {
     return privateCall('/v3/allOrders', {symbol}, 'GET');
-})
+}
+
 
 
 

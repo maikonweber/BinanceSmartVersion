@@ -6,12 +6,15 @@ const l = require('./console.js');
 const appWs = require('./app-ws');
 const {  kline, newOCO, futureOrder  }= require('./api.js')
 const Robot = require('./RedisRobot.js')
+const cors = require('cors')
+const port = 3055
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cors())
 
 
-
-app.post('/',  async (req, res) => {
+app.post('/',  async (req, res) => {   
     const symbol  = req.body;
-
     const result = await client.get(`${symbol.toUpperCase()}_candle`);
     res.send(result);
 });
@@ -34,26 +37,30 @@ app.post('/current_candle', async (req, res) => {
     res.send(result);
 });
 
-app.post('/btcbusd', async (req, res) => {
-    const { symbol } = req.body;
-    const result = await client.get(`${symbol.toLowerCase()}`);
-    res.send(result);
-})
+// app.post('/btcbusd', async (req, res) => {
+//     const { symbol } = req.body;
+//     const result = await client.get(`${symbol.toLowerCase()}`);
+//     res.send(result);
+// })
 
 app.get('/btcbusd', async (req, res) => {
-    const { symbol, interval, limit  } = req.body
+    const symbol = 'BTCBUSD'
+    const interval = '15m'
+    const limit = 60
     try {
-    const res = await kline(symbol, interval, limit)
-    res.json(res)
+    const resulto = await kline(symbol, interval, limit)
+    console.log(resulto)
+    res.json(resulto)
     } catch (err) {
         res.status(504).json(err, res)
     }
 })
 
 app.post('/analizer', async (req, res) => {
+    console.log(req)
     const { symbol, interval, limit } = req.body
     const app = new Robot(symbol.toUpperCase(), interval, limit)
-    app.init()
+    app.Init()
 })
 
 app.post('/futureOrder', async (req, res) => {
@@ -70,12 +77,14 @@ app.post('/futureOrder', async (req, res) => {
         priceProtection    
     } = req.body
 
-    const res =  await futureOrder(symbol.toUpperCase(), quantity, side, positionSide, price)
+    const response =  await futureOrder(symbol.toUpperCase(), quantity, side, positionSide, price)
+    res.json("Good Luck")
 })
 
 
-app.listen(3000, () => {
+app.listen(port, () => {
 console.log('App Express is Running')
+
 })
 
 appWs(app)

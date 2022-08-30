@@ -1,26 +1,25 @@
-import ApexCharts  from "apexcharts";
-
+import ApexChart  from "react-apexcharts";
 
 export default function Chart(props) {
-    const options = {
-        xaxis : {
-            type : 'datetine'
+    console.log(props)
+    const options =  {
+        xasis : {
+            type: ' datetime'
         },
-        yaxis : {
+        yaxis: {
             tooltip : {
-                enabled : true
+                enabled: false
             }
         }
-    }
+      }
 
-const series = [
-    {
+
+ 
+    const series = [{
         data: props.data
-    }
-]
-
-
-return (
-    <ApexCharts options={options} series={series} type='candlestick' width={640} height={480} ></ApexCharts>
+    }]
+ 
+    return (
+        <ApexChart options={options} series={series} type="candlestick" width={940} height={880} />
     )
 }

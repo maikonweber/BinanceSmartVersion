@@ -8,6 +8,13 @@ const {  kline, newOCO, futureOrder  }= require('./api.js')
 const Robot = require('./RedisRobot.js')
 const cors = require('cors')
 const port = 3055
+
+
+const btc = new Robot('BTCBUSD', '15m', 30);
+const eth = new Robot('ETHBUSD, 15m', 30);
+const busdbrl = new Robot('BUSDBRL', '15m', 30);
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors())
@@ -15,8 +22,12 @@ app.use(cors())
 
 app.post('/',  async (req, res) => {   
     const symbol  = req.body;
+    try {
     const result = await client.get(`${symbol.toUpperCase()}_candle`);
-    res.send(result);
+    res.json(result);
+    } catch {
+    res.json("not included")
+    }
 });
 
 app.post('/full_candle', async (req, res) => {

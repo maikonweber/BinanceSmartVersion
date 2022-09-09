@@ -48,6 +48,8 @@ class Robot {
         this.SellVolume = 0;
         this.BuyVolume = 0;
         this.senderAnalizer = {};
+        this.MMAARRAY = [];
+        this.touchArrayMMA = []
 
     }
 
@@ -58,6 +60,7 @@ class Robot {
         await this.logger();   
         await this.statist();
         await this.getFullAnalisys();
+        await this.analyzerRangeTouchMMA();
     }
 
     async statist() {
@@ -212,6 +215,41 @@ class Robot {
 
     async delay(ms) {
         return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    async analyzerRangeTouchMMA() {
+        // Criar um array que tera a informaçao da linha mma em um array bi dimensional
+        // [{MMA10 :  values,MMA20 : values, time: } ]
+        setInterval(() => {
+            this.MMAARRAY.push({
+                "MMA10" : this.MMA10,
+                "MMA30" : this.MMA30,
+                "Time" : new Date().getTime(),
+                "CurrentValor" : this.currentValor
+            })
+
+            if(this.MMAARRAY >= 30) {
+                this.MMAARRAY.shift();
+            }
+
+            const Distance = Math.round(this.MMA10) - Math.round(this.MMA30);
+
+            if (Distance >= 70) {
+                this.touchArrayMMA.push(1)
+            } else {
+                this.touchArrayMMA.push(0)
+            }
+
+            if (this.touchArrayMMA >= 30) {
+                this.touchArrayMMA.shift();
+            }
+
+            
+            this.redis.set(`${this.symbol}_${this.interval}_tochArray`, JSON.stringify(this.touchArrayMMA))
+            this.redis.set(`${this.symbol}_${this.interval}_MMA`, JSON.stringify(this.MMAARRAY))
+
+        }, convertObject(this.interval))
+
     }
 
     async getFullAnalisys () {

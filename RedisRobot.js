@@ -99,7 +99,7 @@ class Robot {
                 BuyVolume: this.BuyVolume,
             }
 
-            await this.redis.set(`${this.symbol.toLowerCase()}_current_analizer`, JSON.stringify(atulizer));
+            await this.redis.set(`${this.symbol.toLowerCase()}_current_analizer_${this.interval}`, JSON.stringify(atulizer));
 
             
         }, 6000)            
@@ -134,7 +134,7 @@ class Robot {
                 BuyVolume: this.BuyVolume,
             }
         
-            this.redis.set(`${this.symbol}_candle`, JSON.stringify(analyzer));
+            this.redis.set(`${this.symbol}_candle_${this.time}`, JSON.stringify(analyzer));
          }, this.timeConvert);
 
     }
@@ -209,7 +209,7 @@ class Robot {
             this.senderAnalizer.rsiDown60 = false;
         }
 
-        await this.redis.set(`${this.symbol.toLowerCase()}_current_analizer`, JSON.stringify(this.senderAnalizer));
+        await this.redis.set(`${this.symbol.toLowerCase()}_current_analizer_${this.time}`, JSON.stringify(this.senderAnalizer));
         }, 12000);
     }
 
@@ -245,8 +245,8 @@ class Robot {
             }
 
             
-            this.redis.set(`${this.symbol}_${this.interval}_tochArray`, JSON.stringify(this.touchArrayMMA))
-            this.redis.set(`${this.symbol}_${this.interval}_MMA`, JSON.stringify(this.MMAARRAY))
+            this.redis.set(`${this.symbol}_${this.time}_tochArray`, JSON.stringify(this.touchArrayMMA))
+            this.redis.set(`${this.symbol}_${this.time}_MMA`, JSON.stringify(this.MMAARRAY))
 
         }, convertObject(this.interval))
 
@@ -278,7 +278,7 @@ class Robot {
                 currentValor: this.currentValor,
             }
 
-            await this.redis.set(`${this.symbol.toLowerCase()}_full_analizer`, JSON.stringify(allProprieties));
+            await this.redis.set(`${this.symbol.toLowerCase()}_full_analizer_${this.time}`, JSON.stringify(allProprieties));
         
             await this.delay(5000);
         }

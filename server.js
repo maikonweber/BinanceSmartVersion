@@ -5,15 +5,16 @@ const client = new redis();
 const l = require('./console.js');
 const appWs = require('./app-ws');
 const {  kline, newOCO, futureOrder  }= require('./api.js')
-const Robot = require('./RedisRobot.js')
+const Robot = require('./RedisRobot');
+
+const app3 = new Robot('BTCBUSD', '1h', 30);
+const app2 = new Robot('BTCBUSD', '15m', 30);
+
+app3.Init()
+app2.Init()
+
 const cors = require('cors')
-const port = 3055
-
-
-const btc = new Robot('BTCBUSD', '15m', 30);
-const eth = new Robot('ETHBUSD, 15m', 30);
-const busdbrl = new Robot('BUSDBRL', '15m', 30);
-
+const port = 3054
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

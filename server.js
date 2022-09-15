@@ -9,9 +9,11 @@ const Robot = require('./RedisRobot');
 
 const app3 = new Robot('BTCBUSD', '1h', 30);
 const app2 = new Robot('BTCBUSD', '15m', 30);
+const app4 = new Robot('BTCBUSD', '1h', 30);
 
 app3.Init()
 app2.Init()
+app4.Init()
 
 const cors = require('cors')
 const port = 3054
@@ -22,9 +24,9 @@ app.use(cors())
 
 
 app.post('/',  async (req, res) => {   
-    const symbol  = req.body;
+    const {symbol , interval } = req.body;
     try {
-    const result = await client.get(`${symbol.toUpperCase()}_candle`);
+    const result = await client.get(`${symbol.toUpperCase()}_candle_${interval}`);
     res.json(result);
     } catch {
     res.json("not included")
@@ -32,20 +34,20 @@ app.post('/',  async (req, res) => {
 });
 
 app.post('/full_candle', async (req, res) => {
-    const { symbol } = req.body;
-    const result = await client.get(`${symbol.toLowerCase()}_full_analizer`);
+    const { symbol, interval } = req.body;
+    const result = await client.get(`${symbol.toLowerCase()}_full_analizer_${interval}`);
     res.send(result);
 });
 
 app.post('/current_analizer', async (req, res) => {
-    const { symbol } = req.body;
-    const result = await client.get(`${symbol.toLowerCase()}_current_analizer`);
+    const { symbol, interval } = req.body;
+    const result = await client.get(`${symbol.toLowerCase()}_current_analizer_${interval}`);
     res.send(result);
 });
 
 app.post('/current_candle', async (req, res) => {
-    const { symbol } = req.body;
-    const result = await client.get(`${symbol.toLowerCase()}_current`);
+    const { symbol, interval } = req.body;
+    const result = await client.get(`${symbol.toLowerCase()}_current_${interval}`);
     res.send(result);
 });
 

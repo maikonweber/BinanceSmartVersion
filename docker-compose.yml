@@ -1,4 +1,4 @@
-version : '3.8'
+version : '3.3'
 services:
   db: 
     container_name: binance_robot
@@ -25,5 +25,3 @@ services:
       interval: 3s
       timeout: 5s
       retries: 5  
-
-

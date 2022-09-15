@@ -99,7 +99,7 @@ class Robot {
                 BuyVolume: this.BuyVolume,
             }
 
-            await this.redis.set(`${this.symbol.toLowerCase()}_current_analizer_${this.interval}`, JSON.stringify(atulizer));
+            await this.redis.set(`${this.symbol.toLowerCase()}_current_analizer_${this.time}`, JSON.stringify(atulizer));
 
             
         }, 6000)            

@@ -141,14 +141,6 @@ class Robot {
     
     async logger () {
         setInterval( async () => {
-        l('yellow', ['Atualizando valores de ', this.syngal]);
-        l('yellow', ['CurrentTime: ', this.CurrentTime]);
-        l('green', ['suporte: ', this.suporte]);
-        l('green', ['resistencia: ', this.resistencia]);
-        l('blue', ['RSI: ', this.RSI]);
-        l('green', ['currentValor: ', this.currentValor]);
-
-
         const mock = Math.round(this.MMA30) 
         if (this.MMA30 > this.MMA10) {
             l('red', ['MMA30 > MMA10', this.MMA30, this.MMA10]);
@@ -243,12 +235,11 @@ class Robot {
             if (this.touchArrayMMA >= 30) {
                 this.touchArrayMMA.shift();
             }
-
             
             this.redis.set(`${this.symbol}_${this.time}_tochArray`, JSON.stringify(this.touchArrayMMA))
             this.redis.set(`${this.symbol}_${this.time}_MMA`, JSON.stringify(this.MMAARRAY))
 
-        }, convertObject(this.interval))
+        }, convertObject(this.time))
 
     }
 
@@ -316,7 +307,6 @@ class Robot {
                   }
                   await this.redis.set(`${Symbol.toLowerCase()}_current`, JSON.stringify(current));
                   this.currentValor = roundToTwo(btc.close);
-
                 }
           });
     }   

@@ -23,8 +23,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors())
 
 
-app.post('/',  async (req, res) => {   
-    const {symbol , interval } = req.body;
+app.get('/',  async (req, res) => {   
+    const symbol = 'BTCBUSD'
+    const interval = '1h'
     try {
     const result = await client.get(`${symbol.toUpperCase()}_candle_${interval}`);
     res.json(result);

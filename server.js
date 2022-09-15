@@ -9,7 +9,7 @@ const Robot = require('./RedisRobot');
 
 const app3 = new Robot('BTCBUSD', '1h', 30);
 const app2 = new Robot('BTCBUSD', '15m', 30);
-const app4 = new Robot('BTCBUSD', '1h', 30);
+const app4 = new Robot('BTCBUSD', '1d', 30);
 
 app3.Init()
 app2.Init()

@@ -93,7 +93,7 @@ app.post('/api/v1/sendLead', async (request, response) => {
 app.post('/api/v3/login', async(request, response) => {
     const user = request.body.email;
     const pass = request.body.password;
-    const data = await isUser(user, pass);
+    const data = await getUser(user, pass);
     if (data === false) {
       res.status(403).send('Usuário ou senha inválidos');
         return

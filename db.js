@@ -11,6 +11,8 @@ var client = new Pool({
 });
 
 
+const pool = client.connect()
+
 
 async function checkToken(token) {
     console.log(token)

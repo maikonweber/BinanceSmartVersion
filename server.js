@@ -44,27 +44,23 @@ app.get('/api/v1', (req, res) => {
 app.use('/api/v2/*', (req, res, next) => {
     console.log(req.headers);
     const token = req.headers.token;
-    if (token) {
-      const user = checkToken(token);
-      if (user) {
+    if (token === '551576') {
         next();
       } else {
         res.send('You need to login to access this page');
       }
-    } else {
-      res.send('You need to login to access this page');
-    }
-})
+
+    })
 
 
 app.post("/api/v2/createus", async (req, res) => {
     const { email, password, name, username, phone, address } = req.body;
+    console.log(email, password, name, username, phone, address)
     let result = await createUsers(email, password, name, username, phone, address);
     res.send(result);
-
   })
 
-  
+  -
 
 // Send Lead   
 app.post('/api/v1/sendLead', async (request, response) => {

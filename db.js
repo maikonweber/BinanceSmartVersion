@@ -1,4 +1,6 @@
 var { Pool, Client } = require("pg");
+const hasher = require('./hasher')
+const crypto = require('crypto')
 
 
 var client = new Pool({

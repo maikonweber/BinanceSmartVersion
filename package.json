@@ -31,6 +31,7 @@
     "react-apexcharts": "^1.4.0",
     "react-use-websockets": "^1.12.1",
     "technicalindicators": "^3.1.0",
+    "telegram": "^2.11.7",
     "tulind": "^0.8.20",
     "ws": "^8.8.1"
   },

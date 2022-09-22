@@ -20,7 +20,7 @@ async function checkToken(token) {
     console.log(token)
     const query = `SELECT * FROM users_token WHERE token = $1`
     try {
-        const result = await pool.query(query, [token]);
+        const result = await client.query(query, [token]);
         return result.rows[0]
     } catch(e) {
         console.log(e)
@@ -35,7 +35,7 @@ async function createUsers(email, password, name, username, phone, address) {
     const query = `INSERT INTO users(username, name, email, password, sal, phone, address)
                     VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`
     try {
-        const result = await pool.query(query, [username, name ,email, hash.hashedpassword, hash.salt, phone, address])
+        const result = await client.query(query, [username, name ,email, hash.hashedpassword, hash.salt, phone, address])
         return result.rows
 
         } catch(e) {
@@ -52,7 +52,7 @@ async function InsertRoulleteEv (name, number) {
     VALUES ($1, $2) returning id;
     `;
 
-    let result = await pool.query(sql, [name, number]);
+    let result = await client.query(sql, [name, number]);
     
     return result
 }
@@ -65,7 +65,7 @@ async function insertUsersToken(id, navegator, is_admin) {
     const query = `INSERT INTO users_token(user_id, token, navegator, is_admin)
                     VALUES ($1, $2, $3, $4) RETURNING *`
     try {
-        const result = await pool.query(query, [id, token, navegator, is_admin])
+        const result = await client.query(query, [id, token, navegator, is_admin])
         console.log(result.rows[0])
         return result.rows[0]
     } catch(e) {
@@ -78,7 +78,7 @@ async function checkToken(token) {
     console.log(token)
     const query = `SELECT * FROM users_token WHERE token = $1`
     try {
-        const result = await pool.query(query, [token]);
+        const result = await client.query(query, [token]);
         return result.rows[0]
     } catch(e) {
         console.log(e)
@@ -90,7 +90,7 @@ async function checkToken(token) {
 async function getUser(email, password) {
     const query = `SELECT * FROM users WHERE email = $1`
         try {
-            const result = await pool.query(query, [email])
+            const result = await client.query(query, [email])
 
             console.log(result)
 
@@ -120,7 +120,7 @@ async function insertOrder(symbol, side, price, quantity, ordertype, ) {
 };
 
 async function verifyLastOrder(pair, type, amount, price, stop, OCOgain, OCOloss, orderExec, time) {
-    const client = await pool.connect()
+   
     var result = await client.query(`
          Select * 
             from 

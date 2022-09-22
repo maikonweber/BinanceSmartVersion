@@ -16,7 +16,7 @@ var client = new Pool({
 
 
 async function checkToken(token) {
-
+  
     console.log(token)
     const query = `SELECT * FROM users_token WHERE token = $1`
     try {
@@ -25,7 +25,8 @@ async function checkToken(token) {
     } catch(e) {
         console.log(e)
     }
-   
+
+}
 
 async function createUsers(email, password, name, username, phone, address) {
   
@@ -40,6 +41,7 @@ async function createUsers(email, password, name, username, phone, address) {
         } catch(e) {
         console.log(e)
     }
+
 }
 
 

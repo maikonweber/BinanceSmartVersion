@@ -16,7 +16,7 @@ var client = new Pool({
 
 
 async function checkToken(token) {
-    await client.connect()
+
     console.log(token)
     const query = `SELECT * FROM users_token WHERE token = $1`
     try {
@@ -25,11 +25,10 @@ async function checkToken(token) {
     } catch(e) {
         console.log(e)
     }
-    await client.end()
-}
+   
 
 async function createUsers(email, password, name, username, phone, address) {
-    await client.connect()
+  
     const hash = hasher.hasher(password, "")
 
     const query = `INSERT INTO users(username, name, email, password, sal, phone, address)
@@ -41,7 +40,6 @@ async function createUsers(email, password, name, username, phone, address) {
         } catch(e) {
         console.log(e)
     }
-    await client.end()
 }
 
 

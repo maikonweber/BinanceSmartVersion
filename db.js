@@ -17,7 +17,7 @@ async function insertLeads(first_name, last_name, phone, email, message) {
     (first_name, last_name, email, phone, message) 
     VALUES ($1, $2, $3, $4, $5);` 
     try {
-      const result = await pool.query(string, [first_name, last_name,  email, phone, message]);
+      const result = await client.query(string, [first_name, last_name,  email, phone, message]);
       console.log(result.rows)
       return true
   } catch (err) {

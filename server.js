@@ -94,7 +94,7 @@ app.post('/api/v3/login', async(request, response) => {
       res.status(403).send('Usuário ou senha inválidos');
         return
       } else {
-      const token = await insertToken();
+      const token = await insertUsersToken();
       response.send(token).status(200);
       }
 });

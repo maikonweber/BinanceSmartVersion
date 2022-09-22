@@ -12,7 +12,18 @@ var client = new Pool({
   ssl: false
 });
 
-
+async function insertLeads(first_name, last_name, phone, email, message) {
+    let string = `INSERT INTO lead 
+    (first_name, last_name, email, phone, message) 
+    VALUES ($1, $2, $3, $4, $5);` 
+    try {
+      const result = await pool.query(string, [first_name, last_name,  email, phone, message]);
+      console.log(result.rows)
+      return true
+  } catch (err) {
+      console.log(err)
+  } 
+  }
 
 
 async function checkToken(token) {

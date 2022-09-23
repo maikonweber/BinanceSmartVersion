@@ -119,7 +119,7 @@ app.use('/api/v3/*', async (request, response, next) => {
     if (check) {
         next();
       } else {
-        res.send('You need to login to access this page');
+        response.send('You need to login to access this page');
       } 
 })
 

@@ -105,6 +105,12 @@ async function insertLeadLocation (ip, geoJson, token) {
     );
     `
 
+    try {
+        const result = await client.query(querym [ip, geoJson, token])
+        return result.row[0]
+    } catch {
+        console.log(e)
+    }
 }
 
 

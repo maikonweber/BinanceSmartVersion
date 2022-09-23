@@ -32,7 +32,11 @@ async function checkToken(token) {
     const query = `SELECT * FROM users_token WHERE token = $1`
     try {
         const result = await client.query(query, [token]);
-        return result.rows[0]
+        if(result.rows[0]) {
+        return true
+        } else {
+        return false
+        }
     } catch(e) {
         console.log(e)
     }

@@ -44,6 +44,7 @@ app.use('/api/*', async (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     const cookie = req.cookies.cookieName;
+    console.log(cookie)
     if(!cookie) {
        const result = await checkInToken(cookie)
        if (result.length > 0)
@@ -112,7 +113,14 @@ app.post('/api/login', async(request, response) => {
 });
 
 app.use('/api/v3/*', async (request, response, next) => {
-
+    console.log(req.headers);
+    const token = req.headers.token;
+    const check  = await checkToken(token)
+    if (check) {
+        next();
+      } else {
+        res.send('You need to login to access this page');
+      } 
 })
 
 app.post('/api/v3/sendPost', async (request, response) => {

@@ -13,8 +13,8 @@ const {
     checkToken,
     createUsers,
     insertUsersToken,
-    insertLeads
-
+    insertLeads,
+    insertLeadLocation
 } = require('./db')
 
 const {  kline, newOCO, futureOrder  }= require('./api.js')

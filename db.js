@@ -109,7 +109,7 @@ async function checkToken(token) {
 async function insertLeadLocation (ip, geoJson, token) {
     const query = `
     INSERT INTO lead_location
-    (token, information, ip)
+    (token, infomation, ip)
     VALUES (
     $1, $2, $3
     );`

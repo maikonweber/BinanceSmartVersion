@@ -84,6 +84,9 @@ async function insertUsersToken(id, navegator, is_admin) {
     }
 }
 
+
+
+
 async function checkInToken(token) {
     console.log(token);
     const query = `SELECT * FROM lead_location WHERE token = 1$`;

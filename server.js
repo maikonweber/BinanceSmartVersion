@@ -40,7 +40,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors())
 
 
-app.get('/api/*', async (req, res, next) => {
+app.use('/api/*', async (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     const cookie = req.cookies.cookieName;
@@ -61,7 +61,6 @@ app.use('/api/v2/*', (req, res, next) => {
       } else {
         res.send('You need to login to access this page');
       }
-
     })
 
 
@@ -98,7 +97,7 @@ app.post('/api/v1/sendLead', async (request, response) => {
 
 // Login 
 
-app.post('/api/v3/login', async(request, response) => {
+app.post('/api/login', async(request, response) => {
     const browser = request.headers['user-agent']
     const user = request.body.email;
     const pass = request.body.password;
@@ -111,6 +110,15 @@ app.post('/api/v3/login', async(request, response) => {
       response.send(token.token).status(200);
       }
 });
+
+app.use('/api/v3/*', async (request, response, next) => {
+
+})
+
+app.post('/api/v3/sendPost', async (request, response) => {
+    const { text, imgs } = req.body
+    console.log(text, imgs, "request")
+})
 
 // GeoIp and Reference of users
 

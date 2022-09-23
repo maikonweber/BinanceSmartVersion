@@ -25,3 +25,15 @@ CREATE TABLE lead_location (
     token text,
     infomation JSON
 );
+
+CREATE TABLE post_relation (
+    users_id integer REFERENCES users(id),
+    post integer REFERENCES post(id)
+);
+
+CREATE TABLE post (
+    id SERIAL PRIMARY KEY,
+    text text not null,
+    img JSON
+);
+

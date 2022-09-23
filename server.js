@@ -99,7 +99,7 @@ app.post('/api/v1/sendLead', async (request, response) => {
 // Login 
 
 app.post('/api/v3/login', async(request, response) => {
-    request
+    const resquestNavegator = request.
     const user = request.body.email;
     const pass = request.body.password;
     const data = await getUser(user, pass);

@@ -87,6 +87,7 @@ app.post('/api/v1/sendLead', async (request, response) => {
 // Login 
 
 app.post('/api/v3/login', async(request, response) => {
+    request
     const user = request.body.email;
     const pass = request.body.password;
     const data = await getUser(user, pass);
@@ -99,6 +100,28 @@ app.post('/api/v3/login', async(request, response) => {
       }
 });
 
+// GeoIp and Reference of users
+
+const GeoIp = require('geoip-lite');
+
+app.post('/api/accept_cookie', async () => {
+    console.log('Headers', + JSON.stringify(req.headers));
+    console.log('IP', + JSON.stringify(req.ip));
+
+    const geo = GeoIp.lookup(req.ip);
+
+    console.log('Browser', + req.headers['user-agent']);
+    console.log('Language', + req.headers['accept-language']);
+    console.log('Country', + (geo ? geo.country : "Unkown"));
+    console.log('Regioon', + (geo ? geo.region: 'Unkown'));
+    
+    console.log(geo);
+
+
+    res.status(200);
+    res.header("Content-Type",'application/json');
+    res.end(JSON.stringify({status: "OK"}));
+})
 
 
 // API Binance 

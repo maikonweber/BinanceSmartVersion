@@ -24,13 +24,13 @@ async function insertPost(Text, Img) {
     }
 }
 
-async function selectPostById(title) {
+async function selectPostByTitle(title) {
     let string = `Select * from post WHERE title ~ $1`;
     try {
     const result = await client.query(string, [title])
     return result.rows
     } catch {
-        return [{ erro : "Dont Find by Tittle" }]
+        return [{ erro : "Dont Find by Title" }]
     }
 }
 
@@ -228,7 +228,12 @@ module.exports = {
     insertUsersToken,
     insertLeads,
     insertLeadLocation,
-    checkInToken
+    checkInToken,
+    insertPost,
+    selectPostById,
+    getAllPost,
+    selectPostByTitle
+    insertPost
 }
 
 

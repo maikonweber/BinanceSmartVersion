@@ -6,6 +6,7 @@ const l = require('./console.js');
 const crypto = require('crypto');
 const appWs = require('./app-ws');
 const cookieParser = require('cookie-parser');
+const GeoIp = require('geoip-lite');
 
 const {
     getUser,
@@ -16,7 +17,11 @@ const {
     insertUsersToken,
     insertLeads,
     insertLeadLocation,
-    checkInToken
+    checkInToken,
+    insertPost,
+    selectPostByTitle,
+    selectPostById,
+
 } = require('./db')
 
 const {  kline, newOCO, futureOrder  }= require('./api.js')
@@ -136,7 +141,6 @@ app.post('/api/v3/sendPost', async (request, response) => {
 
 // GeoIp and Reference of users
 
-const GeoIp = require('geoip-lite');
 
 
 app.post('/api/accept_cookie', async (req, res) => {

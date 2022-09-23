@@ -104,7 +104,7 @@ app.post('/api/v3/login', async(request, response) => {
 
 const GeoIp = require('geoip-lite');
 
-app.post('/api/accept_cookie', async () => {
+app.post('/api/accept_cookie', async (req, res) => {
     console.log('Headers', + JSON.stringify(req.headers));
     console.log('IP', + JSON.stringify(req.ip));
 
@@ -123,7 +123,7 @@ app.post('/api/accept_cookie', async () => {
 
     await insertLeadLocation(req.ip, geo, id)
     res.status(200);
-    
+
     res.header("Content-Type",'application/json');
     res.end(JSON.stringify({status: "OK"}));
 })

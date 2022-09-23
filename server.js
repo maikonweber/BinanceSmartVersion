@@ -120,9 +120,10 @@ app.post('/api/accept_cookie', async () => {
 
     geo.Browser = req.headers['user-agent'];
     geo.Language =  req.headers['accept-language'];
-    
+
     await insertLeadLocation(req.ip, geo, id)
     res.status(200);
+    
     res.header("Content-Type",'application/json');
     res.end(JSON.stringify({status: "OK"}));
 })

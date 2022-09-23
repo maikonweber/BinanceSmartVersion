@@ -34,7 +34,6 @@ app3.Init()
 app2.Init()
 
 const cors = require('cors');
-const { selectAll } = require('d3');
 const port = 3054
 
 app.use(cookieParser())

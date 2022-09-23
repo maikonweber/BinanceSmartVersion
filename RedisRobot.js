@@ -9,7 +9,6 @@ const { roundToTwo } = require('./candles.js');
 const { allOrders } = require('./api.js');
 const { insertOrder } = require('./db.js');
 const { verifyLastOrder } = require('./db.js');
-const { sendTelegram } = require('./telegram.js');
 const Redis = require('ioredis');
 
 const l = require('./console.js');

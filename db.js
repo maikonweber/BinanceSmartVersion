@@ -1,6 +1,7 @@
 var { Pool, Client } = require("pg");
 const hasher = require('./hasher')
-const crypto = require('crypto')
+const crypto = require('crypto');
+const { fcumsum } = require("d3");
 
 
 var client = new Pool({
@@ -84,6 +85,16 @@ async function insertUsersToken(id, navegator, is_admin) {
     }
 }
 
+async function checkInToken(token) {
+    console.log(token);
+    const query = `SELECT * FROM lead_location WHERE token = 1$`;
+    try {
+    const result = await client.query(query, [token])
+        return result.rows[0]
+    } catch (e) {
+        return console.log(e)
+    }
+}
 
 async function checkToken(token) {
     console.log(token)
@@ -103,11 +114,11 @@ async function insertLeadLocation (ip, geoJson, token) {
     VALUES (
     $1, $2, $3
     );`
-    
+
     try {
-        const result = await client.query(querym [ip, geoJson, token])
+        const result = await client.query(query, [ip, geoJson, token])
         return result.row[0]
-    } catch {
+    } catch (e) {
         console.log(e)
     }
 }
@@ -167,7 +178,8 @@ module.exports = {
     createUsers,
     insertUsersToken,
     insertLeads,
-    insertLeadLocation
+    insertLeadLocation,
+    checkInToken
 }
 
 

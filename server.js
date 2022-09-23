@@ -14,7 +14,8 @@ const {
     createUsers,
     insertUsersToken,
     insertLeads,
-    insertLeadLocation
+    insertLeadLocation,
+    checkInToken
 } = require('./db')
 
 const {  kline, newOCO, futureOrder  }= require('./api.js')
@@ -30,14 +31,24 @@ app2.Init()
 const cors = require('cors')
 const port = 3054
 
+app.use(express.cookieParser())
+
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cors())
 
-app.get('/api/v1', (req, res) => {
+
+app.get('/api/*', async (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
+    const cookie = req.cookies.cookieName;
+    if(!cookie) {
+       const result = await checkInToken(cookie)
+       if (result.length > 0)
+       next();
+       }
+       next();
 });
 
 
@@ -103,30 +114,29 @@ app.post('/api/v3/login', async(request, response) => {
 // GeoIp and Reference of users
 
 const GeoIp = require('geoip-lite');
-const { hostname } = require('os');
+
 
 app.post('/api/accept_cookie', async (req, res) => {
+   const cookie = req.cookies.cookieName;
    const ip = req.headers['x-forwarded-for']
    const host =  req.headers['host']
    const browser = req.headers['user-agent']
-
-    const geo = GeoIp.lookup(ip);
-
-    console.log('Country', + (geo ? geo.country : "Unkown"));
-    console.log('Region', + (geo ? geo.region: 'Unkown'));
-    
-    var id = crypto.randomBytes(20).toString('hex');
-    const information = {
+   const geo = GeoIp.lookup(ip);
+   console.log('Country', + (geo ? geo.country : "Unkown"));
+   console.log('Region', + (geo ? geo.region: 'Unkown'));
+   var id = crypto.randomBytes(20).toString('hex');
+   const information = {
         "ip" : ip,
         "host" : host,
         "browser" : browser,
         "geoInfo" : geo
     }
-
-    await insertLeadLocation(ip, information, id)
+    await insertLeadLocation(id, information, ip)
     res.status(200);
     res.header("Content-Type",'application/json');
     res.end(JSON.stringify({status: "OK"}));
+    res.cookie('cookieName', id, { maxAge : 90000, httpOnly: true })
+    console.log('cookie created succesfully');
 })
 
 

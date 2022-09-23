@@ -124,7 +124,7 @@ app.use('/api/v3/*', async (request, response, next) => {
 })
 
 app.post('/api/v3/sendPost', async (request, response) => {
-    const { text, imgs } = req.body
+    const { text, imgs } = request.body
     console.log(text, imgs, "request")
 })
 

@@ -99,15 +99,15 @@ app.post('/api/v1/sendLead', async (request, response) => {
 // Login 
 
 app.post('/api/v3/login', async(request, response) => {
-    const resquestNavegator = request.
+    const browser = req.headers['user-agent']
     const user = request.body.email;
     const pass = request.body.password;
     const data = await getUser(user, pass);
-    if (data === false) {
+    if (!data) {
       res.status(403).send('Usuário ou senha inválidos');
         return
       } else {
-      const token = await insertUsersToken();
+      const token = await insertUsersToken(data, browser, true);
       response.send(token).status(200);
       }
 });

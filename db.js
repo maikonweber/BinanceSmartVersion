@@ -76,7 +76,7 @@ async function insertUsersToken(id, navegator, is_admin) {
     const query = `INSERT INTO users_token(users_id, token, navegator, is_admin)
                     VALUES ($1, $2, $3, $4) RETURNING *`
     try {
-        const result = await client.query(query, [id, token, navegator, is_admin])
+        const result = await client.query(query, [id, token, navegator, true])
         console.log(result.rows[0])
         return result.rows[0]
     } catch(e) {
@@ -134,7 +134,7 @@ async function getUser(email, password) {
             const hash = hasher.hasher(password, result.rows[0].sal)
             console.log(hash)
             if (hash.hashedpassword == result.rows[0].password) {
-                return result.rows[0]
+                return result.rows[0].id
             } else {
                 return 
             } 

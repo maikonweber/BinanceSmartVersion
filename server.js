@@ -99,7 +99,7 @@ app.post('/api/v1/sendLead', async (request, response) => {
 // Login 
 
 app.post('/api/v3/login', async(request, response) => {
-    const browser = req.headers['user-agent']
+    const browser = request.headers['user-agent']
     const user = request.body.email;
     const pass = request.body.password;
     const data = await getUser(user, pass);

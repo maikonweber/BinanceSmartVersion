@@ -32,7 +32,7 @@ app2.Init()
 const cors = require('cors')
 const port = 3054
 
-app.use(express.cookieParser())
+app.use(cookieParser())
 
 app.use(express.json());
 

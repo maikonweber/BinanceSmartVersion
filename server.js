@@ -40,17 +40,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors())
 
 
-app.use('/api/*', async (req, res, next) => {
+app.get('/api/*', async (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     const cookie = req.cookies.cookieName;
-    console.log(cookie)
-    if(!cookie) {
-       const result = await checkInToken(cookie)
-       if (result.length > 0)
-       next();
-       }
-       next();
+    if(cookie) {
+    const result = await checkInToken(cookie)
+    console.log(result)
+    }    
+    next();
+    
+    
 });
 
 

@@ -34,7 +34,8 @@ const app2 = new Robot('BTCBUSD', '15m', 30);
 app3.Init()
 app2.Init()
 
-const cors = require('cors')
+const cors = require('cors');
+const { selectAll } = require('d3');
 const port = 3054
 
 app.use(cookieParser())
@@ -59,27 +60,9 @@ app.get('/api/*', async (req, res, next) => {
 });
 
 
-app.use('/api/v2/*', (req, res, next) => {
-    console.log(req.headers);
-    const token = req.headers.token;
-    if (token === '551576') {
-        next();
-      } else {
-        res.send('You need to login to access this page');
-      }
-    })
-
-
-app.post("/api/v2/createus", async (req, res) => {
-    const { email, password, name, username, phone, address } = req.body;
-    console.log(email, password, name, username, phone, address)
-    let result = await createUsers(email, password, name, username, phone, address);
-    res.send(result);
-  })
-
-  -
 
 // Send Lead   
+
 app.post('/api/v1/sendLead', async (request, response) => {
     
     const first_name = request.body.first_name;
@@ -139,8 +122,23 @@ app.post('/api/v3/sendPost', async (request, response) => {
     }
 })
 
-// GeoIp and Reference of users
+app.get('/api/allPost', async (req, res) => {
+    const allPost = await getAllPost();
+    res.send(allPost).status(200);
+})
 
+app.get('/api/getpost/:id', async (req, res ) => {
+    const id = req.params['id'];
+    const result = await selectPostById(id);
+    res.send(result).status(200);
+})
+
+app.get('api/getpost/:title', async (req, res) => {
+    const title = req.params['title']
+    const result = await selectPostByTitle(title);
+    res.send(result).status(200);
+})
+// GeoIp and Reference of users
 
 
 app.post('/api/accept_cookie', async (req, res) => {
@@ -164,7 +162,6 @@ app.post('/api/accept_cookie', async (req, res) => {
     res.send(JSON.stringify({status: "OK"}))
   
 })
-
 
 // API Binance 
 
@@ -212,6 +209,19 @@ app.get('/api/v3/btcbusd', async (req, res) => {
 })
 
 
+// API PARA CRIAR PRIMEIRO USUARIOS
+
+app.use('/api/v2/*', (req, res, next) => {
+    console.log(req.headers);
+    const token = req.headers.token;
+    if (token === '551576') {
+        next();
+      } else {
+        res.send('You need to login to access this page');
+      }
+    })
+
+
 app.post('/api/v2/futureOrder', async (req, res) => {
     const {
         symbol,  // Symbol
@@ -228,6 +238,18 @@ app.post('/api/v2/futureOrder', async (req, res) => {
     const response =  await futureOrder(symbol.toUpperCase(), quantity, side, positionSide, price)
     res.json("Good Luck")
 })
+
+
+    
+app.post("/api/v2/createus", async (req, res) => {
+    const { email, password, name, username, phone, address } = req.body;
+    console.log(email, password, name, username, phone, address)
+    let result = await createUsers(email, password, name, username, phone, address);
+    res.send(result);
+  })
+
+
+
 
 app.listen(port, () => {
 console.log('App Express is Running')

@@ -232,7 +232,7 @@ module.exports = {
     insertPost,
     selectPostById,
     getAllPost,
-    selectPostByTitle
+    selectPostByTitle,
     insertPost
 }
 

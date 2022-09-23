@@ -109,7 +109,7 @@ app.get('/api',  async (req, res) => {
     const interval = '1h'
     try {
     const result = await client.get(`${symbol.toUpperCase()}_candle_${interval}`);
-    res.json(result);
+    res.send(result);
     } catch {
     res.json("not included")
     }
@@ -160,7 +160,6 @@ app.post('/api/v2/futureOrder', async (req, res) => {
         callBackRate,  // 0.1 or 0.2 -  No Mandatory
         priceProtection    
     } = req.body
-
     const response =  await futureOrder(symbol.toUpperCase(), quantity, side, positionSide, price)
     res.json("Good Luck")
 })

@@ -93,7 +93,7 @@ async function insertUsersToken(id, navegator, is_admin) {
 
 async function checkInToken(token) {
     console.log(token);
-    const query = `SELECT * FROM lead_location WHERE token = 1$`;
+    const query = `SELECT * FROM lead_location WHERE token = $1`;
     try {
     const result = await client.query(query, [token])
         return result.rows[0]

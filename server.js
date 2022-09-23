@@ -103,29 +103,28 @@ app.post('/api/v3/login', async(request, response) => {
 // GeoIp and Reference of users
 
 const GeoIp = require('geoip-lite');
+const { hostname } = require('os');
 
 app.post('/api/accept_cookie', async (req, res) => {
-    console.log(req.headers)
-    console.log(req)
-    console.log('Headers', + JSON.stringify(req.headers));
-    console.log('IP', + JSON.stringify(req.ip));
+   const ip = req.headers['x-forwarded-for']
+   const host =  req.headers['host']
+   const browser = req.headers['user-agent']
 
-    const geo = GeoIp.lookup(req.ip);
+    const geo = GeoIp.lookup(ip);
 
-    console.log('Browser', + req.headers['user-agent']);
-    console.log('Language', + req.headers['accept-language']);
     console.log('Country', + (geo ? geo.country : "Unkown"));
     console.log('Region', + (geo ? geo.region: 'Unkown'));
     
-    console.log(geo);
     var id = crypto.randomBytes(20).toString('hex');
+    const information = {
+        "ip" : ip,
+        "host" : host,
+        "browser" : browser,
+        "geoInfo" : geo
+    }
 
-    geo.Browser = req.headers['user-agent'];
-    geo.Language =  req.headers['accept-language'];
-
-    await insertLeadLocation(req.ip, geo, id)
+    await insertLeadLocation(ip, information, id)
     res.status(200);
-
     res.header("Content-Type",'application/json');
     res.end(JSON.stringify({status: "OK"}));
 })

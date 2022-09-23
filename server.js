@@ -108,7 +108,7 @@ app.post('/api/v3/login', async(request, response) => {
         return
       } else {
       const token = await insertUsersToken(data, browser, true);
-      response.send(token).status(200);
+      response.send(token.token).status(200);
       }
 });
 

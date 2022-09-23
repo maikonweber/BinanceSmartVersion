@@ -105,6 +105,8 @@ app.post('/api/v3/login', async(request, response) => {
 const GeoIp = require('geoip-lite');
 
 app.post('/api/accept_cookie', async (req, res) => {
+    console.log(req.headers)
+    console.log(req)
     console.log('Headers', + JSON.stringify(req.headers));
     console.log('IP', + JSON.stringify(req.ip));
 
@@ -113,7 +115,7 @@ app.post('/api/accept_cookie', async (req, res) => {
     console.log('Browser', + req.headers['user-agent']);
     console.log('Language', + req.headers['accept-language']);
     console.log('Country', + (geo ? geo.country : "Unkown"));
-    console.log('Regioon', + (geo ? geo.region: 'Unkown'));
+    console.log('Region', + (geo ? geo.region: 'Unkown'));
     
     console.log(geo);
     var id = crypto.randomBytes(20).toString('hex');

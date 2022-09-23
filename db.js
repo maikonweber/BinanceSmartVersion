@@ -116,7 +116,7 @@ async function insertLeadLocation (ip, geoJson, token) {
 
     try {
         const result = await client.query(query, [ip, geoJson, token])
-        return result.row[0]
+        return result
     } catch (e) {
         console.log(e)
     }

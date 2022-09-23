@@ -109,14 +109,16 @@ app.use('/api/v3/*', async (request, response, next) => {
       } 
 })
 
+// Send Post 
+
 app.post('/api/v3/sendPost', async (request, response) => {
     const { Text, img, title } = request.body
-    console.log(Text, img, "request");
+    console.log(Text, img, title,"request");
     try {
-    const insertPost = await insertPost(Text, img);
-    request.send("True");
+    const post = await insertPost(Text, img, title);
+    response.send("True");
     } catch {
-    request.send("False");
+    response.send("False");
     }
 })
 

@@ -12,10 +12,10 @@ var client = new Pool({
   ssl: false
 });
 
-async function insertPost(Text, Img) {
-    let string = `INSERT INTO post (text, img) VALUES ($1, $2)`;
+async function insertPost(Text, Img, title) {
+    let string = `INSERT INTO post (text, img, title) VALUES ($1, $2, $3)`;
     try {
-        const result = await client.query(string, [Text, Img])
+        const result = await client.query(string, [Text, Img, title])
         console.log(result)
         return true
     } catch (er) {

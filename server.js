@@ -124,8 +124,9 @@ app.use('/api/v3/*', async (request, response, next) => {
 })
 
 app.post('/api/v3/sendPost', async (request, response) => {
-    const { text, imgs } = request.body
-    console.log(text, imgs, "request")
+    const { Text, img } = request.body
+    console.log(Text, img, "request")
+    const insertPost = await 
 })
 
 // GeoIp and Reference of users

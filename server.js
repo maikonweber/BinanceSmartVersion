@@ -5,6 +5,7 @@ const client = new redis();
 const l = require('./console.js');
 const crypto = require('crypto');
 const appWs = require('./app-ws');
+const cookieParser = require('cookie-parser');
 
 const {
     getUser,

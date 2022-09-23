@@ -7,7 +7,6 @@ const crypto = require('crypto');
 const appWs = require('./app-ws');
 const cookieParser = require('cookie-parser');
 const GeoIp = require('geoip-lite');
-
 const {
     getUser,
     insertOrder,
@@ -112,7 +111,7 @@ app.use('/api/v3/*', async (request, response, next) => {
 })
 
 app.post('/api/v3/sendPost', async (request, response) => {
-    const { Text, img } = request.body
+    const { Text, img, title } = request.body
     console.log(Text, img, "request");
     try {
     const insertPost = await insertPost(Text, img);
@@ -138,8 +137,9 @@ app.get('api/getpost/:title', async (req, res) => {
     const result = await selectPostByTitle(title);
     res.send(result).status(200);
 })
-// GeoIp and Reference of users
 
+
+// GeoIp and Reference of users
 
 app.post('/api/accept_cookie', async (req, res) => {
    const cookie = req.cookies.cookieName;

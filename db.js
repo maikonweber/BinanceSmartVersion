@@ -1,6 +1,7 @@
 var { Pool, Client } = require("pg");
 const hasher = require('./hasher')
 const crypto = require('crypto');
+const { title } = require("process");
 
 
 var client = new Pool({
@@ -11,6 +12,48 @@ var client = new Pool({
   host: "localhost",
   ssl: false
 });
+
+async function insertPost(Text, Img) {
+    let string = `INSERT INTO post (text, img) VALUES ($1, $2)`;
+    try {
+        const result = await client.query(string, [Text, Img])
+        console.log(result)
+        return true
+    } catch (er) {
+        return er
+    }
+}
+
+async function selectPostById(title) {
+    let string = `Select * from post WHERE title ~ $1`;
+    try {
+    const result = await client.query(string, [title])
+    return result.rows
+    } catch {
+        return [{ erro : "Dont Find by Tittle" }]
+    }
+}
+
+async function selectPostById(id) {
+    let string = `Select * from post Where id = $1`;
+    try {
+        const result = await client.query(string, [id])
+        return result.rows[0]
+    } catch (er) {
+        return [{ error : "Dont find by id"}]
+    }
+}
+
+async function getAllPost() {
+    let string = `Select * from post order by created`
+    try {
+        const result = await client.query(string)
+        console.log(result);
+        return result.rows
+    } catch {
+        return [{ error : "Dont find any post"}]
+    }
+}
 
 async function insertLeads(first_name, last_name, phone, email, message) {
     let string = `INSERT INTO lead 

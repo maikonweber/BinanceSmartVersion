@@ -113,8 +113,8 @@ app.post('/api/login', async(request, response) => {
 });
 
 app.use('/api/v3/*', async (request, response, next) => {
-    console.log(req.headers);
-    const token = req.headers.token;
+    console.log(request);
+    const token = request.headers.token;
     const check  = await checkToken(token)
     if (check) {
         next();

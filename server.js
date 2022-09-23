@@ -3,7 +3,7 @@ const app = express();
 const redis = require('ioredis');
 const client = new redis();
 const l = require('./console.js');
-
+const crypto = require('crypto');
 const appWs = require('./app-ws');
 
 const {
@@ -116,8 +116,12 @@ app.post('/api/accept_cookie', async () => {
     console.log('Regioon', + (geo ? geo.region: 'Unkown'));
     
     console.log(geo);
+    var id = crypto.randomBytes(20).toString('hex');
 
-
+    geo.Browser = req.headers['user-agent'];
+    geo.Language =  req.headers['accept-language'];
+    
+    await insertLeadLocation(req.ip, geo, id)
     res.status(200);
     res.header("Content-Type",'application/json');
     res.end(JSON.stringify({status: "OK"}));

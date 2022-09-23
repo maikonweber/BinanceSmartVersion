@@ -96,6 +96,17 @@ async function checkToken(token) {
     }
 }
 
+async function insertLeadLocation (ip, geoJson, token) {
+    const query = `
+    INSERT INTO lead_location
+    (token, information, ip)
+    VALUES (
+    $1, $2, $3
+    );
+    `
+
+}
+
 
 
 async function getUser(email, password) {
@@ -150,7 +161,8 @@ module.exports = {
     checkToken,
     createUsers,
     insertUsersToken,
-    insertLeads
+    insertLeads,
+    insertLeadLocation
 }
 
 

@@ -19,3 +19,9 @@ CREATE TABLE users_token (
     navegator text NOT NULL,
     is_admin BOOLEAN
 );
+
+CREATE TABLE lead_location (
+    id SERIAL PRIMARY KEY,
+    token text,
+    infomation JSON
+);

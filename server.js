@@ -133,11 +133,10 @@ app.post('/api/accept_cookie', async (req, res) => {
         "geoInfo" : geo
     }
     await insertLeadLocation(id, information, ip)
-    res.status(200);
-    res.header("Content-Type",'application/json');
-    res.end(JSON.stringify({status: "OK"}));
-    res.cookie('cookieName', id, { maxAge : 90000, httpOnly: true })
     console.log('cookie created succesfully');
+    res.cookie('cookieName', id, { maxAge : 90000, httpOnly: true })
+    res.send(JSON.stringify({status: "OK"}))
+  
 })
 
 

@@ -20,7 +20,7 @@ const {
     insertPost,
     selectPostByTitle,
     selectPostById,
-
+    getAllPost
 } = require('./db')
 
 const {  kline, newOCO, futureOrder  }= require('./api.js')
@@ -139,11 +139,12 @@ app.get('api/getpost/:title', async (req, res) => {
     res.send(result).status(200);
 })
 
-
 // GeoIp and Reference of users
+// lastPage.textContent = document.referrer;
 
 app.post('/api/accept_cookie', async (req, res) => {
    const cookie = req.cookies.cookieName;
+   const info = req.body.info
    const ip = req.headers['x-forwarded-for']
    const host =  req.headers['host']
    const browser = req.headers['user-agent']
@@ -155,8 +156,10 @@ app.post('/api/accept_cookie', async (req, res) => {
         "ip" : ip,
         "host" : host,
         "browser" : browser,
-        "geoInfo" : geo
-    }
+        "geoInfo" : geo,
+        "info" : info
+     }
+
     await insertLeadLocation(id, information, ip)
     console.log('cookie created succesfully');
     res.cookie('cookieName', id, { maxAge : 90000, httpOnly: true })

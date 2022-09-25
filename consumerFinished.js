@@ -10,6 +10,7 @@
      parOuImpar,
 } = require('./jsonObjects/jsonStrategy')
 
+
  function restOfNumber (value, spectNumber, number, string) {
      const array1 = new Array(...value)
 
@@ -192,7 +193,6 @@ async setupConnection() {
         imparOrPar : imparx
      } 
 
-    console.log(strategyProccess)    
     return this.regExStrategy(strategyProccess)        
 }
 
@@ -209,7 +209,7 @@ async setupConnection() {
           let strategyProced = {}
 
      
-          let times = 10
+          let times = 17
           let array = []
 
           //parOuImpar,
@@ -333,12 +333,21 @@ async setupConnection() {
           strategyProced.arrayBloco1Ausencia = arrayBloco1Ausencia
           strategyProced.arrayBloco1Ausencia = arrayBloco1Ausencia
           // Convert array to string
+          console.log(strategyProced)
           return strategyProced;
      }
+     
+ async matchStrategy (strategy) {
+     const bloco1Ausencia = strategy.arrayBloco1Ausencia.map(el => el.coluna)
+     const bloco2Ausencia = strategy.arrayColunas3Ausencia.map(el => el.coluna)
+
+     arrayColunas1Ausencia
+ }
 
     async regExe(string, objetoRolleta, strategyArg) {
           // RegEx Nao Intendificado
           // if true return false
+          console.log(string, objetoRolleta, strategyArg)
           const regEx = /Não identificado/g;
           if (regEx.test(string)) {
                return false
@@ -349,7 +358,7 @@ async setupConnection() {
                    payload : objetoRolleta,
                    created : new Date().getTime()
                }
-               
+               console.log(estrategiaDetect)
                const created = estrategiaDetect.created;
                // Make division mock 1 minutes
                const mock = created / 1000 / 60;
@@ -373,16 +382,19 @@ async setupConnection() {
             FROM robotevolution Where created > now() - interval '1 day' Group by name;`)
             LastNames.rows.forEach(async element => {
                 const last30 = await this.client.query(`
-                Select name, number from robotevolution
+                Select number[1] from robotevolution
                 WHERE created > NOW() - INTERVAL '1 day'
-                AND name = $1 limit 1;
+                AND name = $1 limit 18;
                 `, [element.name])
 
-
+            
+               const map = last30.rows.map(e => e.number);
+           
                 const objectAnalyser = {
-                    roulletName : last30.rows[0].name,
-                    numberjson : last30.rows[0].number
+                    roulletName : element.name,
+                    numberjson : map
                     }
+
                return this.createPattern(objectAnalyser.numberjson)       
                })
 

@@ -14,7 +14,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google-cloud/storage": "^6.5.2",
     "@material-ui/icons": "^4.11.2",
+    "amqp": "^0.2.7",
+    "amqplib": "^0.10.3",
     "apexcharts": "^3.35.5",
     "axios": "^0.24.0",
     "bot-brother": "^2.1.5",
@@ -27,6 +30,7 @@
     "geoip-lite": "^1.4.6",
     "ioredis": "^5.2.2",
     "moment": "^2.29.1",
+    "multer": "^1.4.5-lts.1",
     "node-telegram-bot-api": "^0.56.0",
     "node-webhooks": "^1.4.2",
     "pg": "^8.7.1",

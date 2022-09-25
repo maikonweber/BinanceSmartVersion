@@ -7,6 +7,28 @@ const crypto = require('crypto');
 const appWs = require('./app-ws');
 const cookieParser = require('cookie-parser');
 const GeoIp = require('geoip-lite');
+const { Storage } = require('@google-cloud/storage')
+const Multer = require('multer');
+
+const multer = Multer({
+    storage: Multer.memoryStorage(),
+    limits : {
+        fileSize : 5 * 1024 * 1024,
+    }
+})
+
+
+
+
+let projectId = 'teste-332301 '
+let keyFilename = './key.json'
+
+const storage = new Storage({
+    projectId,
+    keyFilename
+})
+const buckted = storage.bucket('buckted')
+
 const {
     getUser,
     insertOrder,
@@ -20,18 +42,25 @@ const {
     insertPost,
     selectPostByTitle,
     selectPostById,
-    getAllPost
+    getAllPost,
+    InsertRoulleteEv,
+    getUsersFilter,
+    usersFilters,
+    insertCardPayload,
+    getLastNumberEv,
+    getLastNumberCard
+    
 } = require('./db')
 
 const {  kline, newOCO, futureOrder  }= require('./api.js')
 
-const Robot = require('./RedisRobot');
+//const Robot = require('./RedisRobot');
 
-const app3 = new Robot('BTCBUSD', '1h', 30);
-const app2 = new Robot('BTCBUSD', '15m', 30);
+//const app3 = new Robot('BTCBUSD', '1h', 30);
+//const app2 = new Robot('BTCBUSD', '15m', 30);
 
-app3.Init()
-app2.Init()
+//app3.Init()
+//app2.Init()
 
 const cors = require('cors');
 const port = 3054
@@ -102,7 +131,8 @@ app.use('/api/v3/*', async (request, response, next) => {
     console.log(request);
     const token = request.headers.token;
     const check  = await checkToken(token)
-    if (check) {
+    req.header['users_id'] = check.result
+    if (check.accept) {
         next();
       } else {
         response.send('You need to login to access this page');
@@ -111,14 +141,30 @@ app.use('/api/v3/*', async (request, response, next) => {
 
 // Send Post 
 
-app.post('/api/v3/sendPost', async (request, response) => {
-    const { Text, img, title } = request.body
-    console.log(Text, img, title,"request");
+app.post('/api/sendPost', multer.single('imgFile') ,async (req, res) => {
+    const { Text, title } = req.body
     try {
-    const post = await insertPost(Text, img, title);
-    response.send("True");
+        if(req.file) {
+            const blob = buckted.file(req.file.originalname);
+            const blobStream = blob.createWriteStream();
+            blobStream.on("finished", () => {
+                console.log('finished');
+            })
+
+            console.log('sucess')
+            blobStream.end(req.file.buffer);
+        }
     } catch {
-    response.send("False");
+        res.status(500).send('Error no Upload das Fotos')
+    }
+   
+    const userid = req.headers.user_id
+
+    try {
+    // const post = await insertPost(userid,Text, img, title);
+    res.send("True");
+    } catch {
+    res.send("False");
     }
 })
 
@@ -144,7 +190,7 @@ app.get('api/getpost/:title', async (req, res) => {
 
 app.post('/api/accept_cookie', async (req, res) => {
    const cookie = req.cookies.cookieName;
-   const info = req.body.info
+   const info = req.body.info // About last page view
    const ip = req.headers['x-forwarded-for']
    const host =  req.headers['host']
    const browser = req.headers['user-agent']
@@ -167,6 +213,76 @@ app.post('/api/accept_cookie', async (req, res) => {
   
 })
 
+// Roullete Evolution
+
+
+app.post('/api/evolution', async (req, res) => {
+    const body = req.body;
+    const {name, data} = body;  // console.log(name, number)
+    let name_ = name.replace(/\s/g, '_');
+    const result = await getLastNumberEv(name_) 
+    console.log(result)
+    
+    if (!result) {
+      console.log('--insert--')
+      const insertResult = await InsertRoulleteEv(name_, data)
+      return res.send('This number insert')
+    }
+  
+    if(JSON.stringify(result) != JSON.stringify(data)) {
+        console.log('Here her this shit')
+        const insertResult = await InsertRoulleteEv(name_, data)
+        return res.send('This Number Insert')
+        }
+        res.send('This Number Already Insert')
+  })
+
+  app.post('/api/cards_', async (req, res) => {
+    const body = req.body
+    let { number , name } = body  
+    let name_ = name.replace(/\s/g, '_');
+    // res.send(result).status(200)
+    
+    const result = await redis.get(`${name_}_${number}`)
+    if(!result){
+      await redis.set(`${name_}_${number}`, 'true', 'EX', '60')
+      const objg = await insertCardPayload(name_, number)  
+  
+    } 
+    res.send(result).status(200)
+    
+  })
+  
+
+  
+
+app.post('/api/football/table', async (req, res) => {
+    console.log(req.body)
+  })
+  
+  app.post('/api/football/incoming', async (req, res) => {
+    console.log(req.body) 
+  })
+  
+  app.post('/api/football/statisct', async (req, res) => {
+    console.log(req.body)
+    
+    })
+    
+    
+  app.post('/api/football/best-player-time', async (req, res) => {
+    console.log(req.body)
+  })
+  
+  app.post('/api/football/time-incoming', async (req, res) => {
+    console.log(req.body)
+    
+  })
+   
+  app.post('/api/football/best-player-tating', async (req, res) => {
+    console.log(req.body)
+    
+  })
 // API Binance 
 
 
@@ -252,11 +368,11 @@ app.post("/api/v2/createus", async (req, res) => {
     res.send(result);
   })
 
-
+app.post('api')
 
 
 app.listen(port, () => {
-console.log('App Express is Running')
+console.log('App Express is Running, '  + port);
 })
 
 appWs(app)

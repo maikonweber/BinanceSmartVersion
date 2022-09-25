@@ -3,6 +3,7 @@ const hasher = require('./hasher')
 const crypto = require('crypto');
 
 
+
 var client = new Pool({
   user: "binance",
   password: "binance",
@@ -11,6 +12,108 @@ var client = new Pool({
   host: "localhost",
   ssl: false
 });
+
+async function getAllRows() {
+    let sql = `SELECT * FROM roullete_new
+    Where aposta ~ 'Bloco' AND created > (now() - interval '1 day')
+    OR aposta ~ 'Coluna' AND created > (now() - interval '1 day')
+        `;
+
+    let result = await client.query(sql);
+    return result.rows;
+}
+
+async function InsertRoulleteEv (name, number) {
+    if (number != null) {
+    let sql = `INSERT INTO 
+    robotevolution (name, number) 
+    VALUES ($1, $2);
+    `;
+    let result = await client.query(sql, [name, number]);
+    return result
+    }   
+}
+
+async function getUsersFilter (email) {
+    let query = `With d as 
+    (Select id, email
+    from users
+    ) Select * 
+      from users_filter
+      JOIN d
+      ON d.id = users_id;`
+      
+    let result = await client.query(query);
+    return result.rows
+}
+
+
+async function usersFilters(user_id, games, roullet_permit, string_msg, string_msg_green, string_msg_red) {
+    console.log(user_id, games, roullet_permit, string_msg, string_msg_green, string_msg_red)
+    // Parse games to jsonb 
+    let gamesJson = JSON.stringify(games);
+
+    // parse roullet_permit to jsonb
+    let roulletPermitJson = JSON.stringify(roullet_permit);
+
+    let query = `INSERT INTO users_filters 
+                 (user_id, games, rollets_permit, string_msg , string_msg_green, string_msg_red)
+                 VALUES ($1, $2, $3, $4, $5, $6)
+                 ON CONFLICT (user_id) DO UPDATE SET    
+                    games = $2,
+                    strategy = $3,
+                    string_msg = $4,
+                    string_msg_green = $5,
+                    string_msg_red = $6
+                    Where users_filters.user_id = $1 RETURNING *`
+    try {
+
+    let result = await client.query(query, [user_id, gamesJson, roulletPermitJson, string_msg, string_msg_green, string_msg_red]);
+    
+    return result.rows
+    } catch(e) {
+        console.log(e)
+    }   
+ 
+}
+
+    
+
+
+async function insertCardPayload (name, number) {
+    let sql = `
+    INSERT INTO paylaod_card 
+    (name, number)
+     VALUES 
+     ($1, $2) 
+     RETURNING id`
+
+    let result = await client.query(sql, [name, number])
+    return result.rows[0];
+}
+
+
+async function getLastNumberEv(name) {
+    let sql = `SELECT number 
+    FROM robotevolution where name = $1
+    order by created  
+    desc limit 18;`;
+
+    let result = await client.query(sql, [name]);
+    return result.rows[0];
+}
+
+async function getLastNumberCard(name) {
+    let sql = `SELECT number 
+    FROM paylaoad_card where name ~ $1
+    order by created  
+    desc limit 1;`;
+
+    let result = await client.query(sql, [name]);
+    return result.rows[0];
+}
+
+
 
 async function insertPost(Text, Img, title) {
     let string = `INSERT INTO post (text, img, title) VALUES ($1, $2, $3)`;
@@ -75,7 +178,7 @@ async function checkToken(token) {
     try {
         const result = await client.query(query, [token]);
         if(result.rows[0]) {
-        return true
+        return { accept : true, result : result}
         } else {
         return false
         }
@@ -103,7 +206,7 @@ async function createUsers(email, password, name, username, phone, address) {
 
 
 async function InsertRoulleteEv (name, number) {
-    await client.connect()
+
     let sql = `INSERT INTO 
     robotevolution (name, number) 
     VALUES ($1, $2) returning id;
@@ -232,7 +335,15 @@ module.exports = {
     selectPostById,
     getAllPost,
     selectPostByTitle,
-    insertPost
+    insertPost,
+    getAllRows,
+    InsertRoulleteEv,
+    getUsersFilter,
+    usersFilters,
+    insertCardPayload,
+    getLastNumberEv,
+    getLastNumberCard
+
 }
 
 

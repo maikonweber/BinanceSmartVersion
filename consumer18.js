@@ -347,7 +347,7 @@ async function strategyProced (objetoRolleta) {
      // Get the strategy
      const strategyProcess = await strategyConsultFor18(objetoRolleta.number)
      objetoRolleta.detectStrategy = await strategy18Procced(strategyProcess)
-    console.log(objetoRolleta.detectStrategy)
+
      objetoRolleta.detectStrategy.colunasRepeat.forEach(async (coluna) => {
      
           await regExe(coluna.coluna, objetoRolleta,)
@@ -425,7 +425,6 @@ async function regExe(string, objetoRolleta, strategyArg) {
      } else {
         const estrategiaDetect =  {
               estrategiaDetect : string, 
-              roulleteName : strategyArg, 
               payload : objetoRolleta,
               created : new Date().getTime()
           }
@@ -434,7 +433,6 @@ async function regExe(string, objetoRolleta, strategyArg) {
           // Make division mock 1 minutes
           const mock = created / 1000 / 60;
           const mockDivision = Math.floor(mock);
-
           let result = await redis.get(`${estrategiaDetect.estrategiaDetect}_${estrategiaDetect.roulleteName}_sygnal`)
           if(!result) {
           await redis.set(`${estrategiaDetect.estrategiaDetect}_${estrategiaDetect.roulleteName}_sygnal`, `alert - ${estrategiaDetect.estrategiaDetect}, ${estrategiaDetect.roulleteName})`, 'EX', 60 * 1)
@@ -459,15 +457,13 @@ async function regExe(string, objetoRolleta, strategyArg) {
 } 
 
 setInterval ( async () => {
-            console.log('Thick This Interval for Queue Sygnal')
-            console.log('---------------------------------------')
-            const LastNames = await client.query(`SELECT name 
+                       const LastNames = await client.query(`SELECT name 
             FROM robotevolution Where created > now() - interval '1 day' Group by name;`)
             LastNames.rows.forEach(async element => {
                 const last30 = await client.query(`
                 Select number[1] from robotevolution
                 WHERE created > NOW() - INTERVAL '1 day'
-                AND name = $1 limit 24;
+                AND name = $1 limit 25;
                 `, [element.name])
 
                const map = last30.rows.map(e => e.number);

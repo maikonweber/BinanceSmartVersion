@@ -3,17 +3,15 @@ const { TelegramClient } = require("telegram");
 const { StringSession } = require("telegram/sessions");
 const testStrategy = require('./functions/testStrategy')
 const consulExpectNumber = require('./functions/detectExpectNumber')
-
 var pg = require('pg');
-const EventEmitter = require('events');
 
 
 let client = {
     host: 'localhost',
-    port: 5532,
-    database: 'roullet',
-    user: 'roullet',
-    password: 'roullet'
+    port: 5832,
+    database: 'binance',
+    user: 'binance',
+    password: 'binance'
 };
 
 let pool = new pg.Pool(client);

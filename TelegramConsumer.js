@@ -70,7 +70,6 @@ let user = {
      usersStringWin: 'GREEN ${Roulleta} - ${LastResult}',
      usersStringMartingale : 'Martingale - ${Roulleta} - ${LastResult} - ${ExpectNumber}',
      usersStringLoss: 'LOSS - ${Roulleta} - ${LastResult}',
-
 }
 
 

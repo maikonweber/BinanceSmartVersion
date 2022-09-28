@@ -1,13 +1,20 @@
-const { TelegramClient, Api, client } = require("telegram");
+const { TelegramClient, Api } = require("telegram");
 const { StringSession } = require("telegram/sessions");
 
 const input = require('input')
 
 const apiId = 17228434;
-const apiHash = 'b05e1c84ad4dd7c779965204c016a36'
+const apiHash = 'b05e1c84ad4dd7c77e9965204c016a36'
 
 const stringSession = new StringSession('');
 const Redis = require('ioredis');
+
+
+
+
+const client = new TelegramClient(stringSession, apiId, apiHash,  {
+    connectionRetries: 5,
+})
 
 const redis = new Redis();
 
@@ -31,6 +38,7 @@ async function sendMsg(sala, msg, reply) {
     }
 }
 ;(async () => {
+
 await client.start({
     phoneNumber: async () => await input.text("Please enter your number: "),
     password: async () => await input.text("Please enter your password: "),
@@ -39,7 +47,6 @@ await client.start({
     onError: (err) => console.log(err),
     
   });
-
 
 const result = await client.invoke( new Api.messages.GetAllChats({
     exceptIds : [43]

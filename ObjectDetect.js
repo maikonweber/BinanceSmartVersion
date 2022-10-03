@@ -37,15 +37,8 @@ class StrategyProccedChannel {
           this.usersStringGreen = users.usersStringWin
           this.usersStringRed = users.usersStringLoss
           this.usersMartingale = users.usersStringMartingale
-          this.isBusy = false
-          this.sygnalObject;
-          this.expectConsultNumber;
-          this.expectNumberResult;
           this.waitingResult = false
-          this.currentResult;
-          this.currentLastResult;
           this.emitResult;
-          this.finished = false
           this.clientTelegram;
      }
 
@@ -69,111 +62,17 @@ class StrategyProccedChannel {
      }        
 
      async proccedThisSygnal(sygnalObject) {
-          if(this.isBusy === false) {
-               console.log('Procced This Sygnal')
-               console.log(sygnalObject)
-               if (this.availableRoullete.includes(sygnalObject.roulleteName)) {
-                    if(this.usersFilter.includes(sygnalObject.estrategiaDetect)) {
-                         console.log(sygnalObject)
-                         this.isBusy = true
-                         return this.waitingComprove(sygnalObject)   
-                    }
-               }
-          }
+          const isRoulleteAvailable = this.availableRoullete.includes(sygnalObject))
+          const isStrategyAvailable = this.usersFilter.includes(sygnalObject));
+          if(isRoulleteAvailable && isStrategyAvailable) {
+               await this.SendNotification(sygnalObject)
+          }               
      }
 
-
-     async waitingComprove (sygnalObject) {     
-          console.log('Waiting Comprove')
-          console.log(sygnalObject)
-          this.expectConsult(sygnalObject.estrategiaDetect)
-          this.expectNumber(sygnalObject.estrategiaDetect)
-          this.sygnalObject = sygnalObject
-          this.waitingResult = true
-          this.getUpdateCurrentResult(sygnalObject.roulletName)
-          this.comproveSygnal(sygnalObject)     
-          // await this.clientTelegram.sendMessage("me", { message : "Work" } )
+     async SendNotification() {
+          await sendMsgChanell(this.clientTelegram, sygnalObject, this.usersStringAlert)
      }
-
-     comprovSygnal(sygnalObject) {
-          console.log('Comprove Sygnal')
-          if(this.currentResult != this.sygnalObject.lastNumber) {
-               this.currentResultLast = this.currentResult
-               if(this.expectConsult.includes(this.currentResult[0])) {
-                  // this.senderMsg(sygnalObject)
-                  // this.clientTelegram.sendMessage("me", { message : "Work" } )
-                    this.waitingResult = true
-                    this.currentResultLast = this.currentResult
-                    this.waitingComprove(sygnalObject)
-               } else {
-                    // Delete the current msg 
-               }
-          }
-     }
-
-     waitingComprove (sygnalObject) {
-          if (this.currentResult != this.currentResultLast) {
-               this.currentResultLast = this.currentResult
-               if (this.expectNumber.includes(this.currentResult[0])) {
-                    this.waitingResult = true
-                    this.currentResultLast = this.currentResult
-                    this.sendWIn(sygnalObject)
-               } else {
-                    this.martingale += 1
-                    if (this.martingale < this.martingaleLimit) {
-                         // Send martingale msg and waiting comprove
-                         this.sendMartingale(sygnalObject)
-                         this.waitingComprove(sygnalObject)
-                    } else {
-                         // Send loss msg and waiting comprove
-                         this.sendLoss(sygnalObject)
-                         // Reset this.busy to false
-                         this.isBusy = false
-                         this.martingale = 0
-                         this.waitingResult = false
-                    }
-                    // Delete the current msg 
-               }
-
-          }
-     }
-
-
-     expectConsult (sygnalObject) {
-          console.log('Comprove and Wainting for the next reapeat')
-          this.expectConsultNumber = consulExpectNumber(sygnalObject) 
-          console.log(this.expectConsult)
-     }    
-
-     expectNumber (syngal) {
-          console.log('Expect Number Update')
-          this.expectNumberResult = testStrategy(syngal)  
-          return testStrategy(syngal) 
-     }    
-
-
-     async getUpdateCurrentResult (sygnalName) {
-          while(this.finished === false) {
-          this.currentResult = await getLastNumberEv(sygnalName) 
-          await this.sleep(3000)
-          }
-     }
-
-     comproveWin () {
-          if (comproveWin == true) {
-               
-               
-          }
-     }     
-          
-     senderMsg(sygnalObject) {
-
-     }
-
-
-
-
-
+     
 }
 
 module.exports =  StrategyProccedChannel

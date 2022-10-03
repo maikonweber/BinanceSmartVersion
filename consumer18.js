@@ -436,6 +436,7 @@ async function regExe(string, objetoRolleta, strategyArg) {
           let result = await redis.get(`${estrategiaDetect.estrategiaDetect}_${estrategiaDetect.roulleteName}_sygnal`)
           if(!result) {
           await redis.set(`${estrategiaDetect.estrategiaDetect}_${estrategiaDetect.roulleteName}_sygnal`, `alert - ${estrategiaDetect.estrategiaDetect}, ${estrategiaDetect.roulleteName})`, 'EX', 60 * 1)
+          console.log('Estrategia', estrategiaDetect)
           amqplib.connect('amqp://guest:guest@localhost:5672', (err, conn) => {
                if (err) throw err;
                conn.createChannel((err, ch1) => {

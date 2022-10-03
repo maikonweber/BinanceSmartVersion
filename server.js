@@ -297,25 +297,25 @@ app.get('/api',  async (req, res) => {
     }
 });
 
-app.post('/api/v3/full_candle', async (req, res) => {
+app.post('/api/v4/full_candle', async (req, res) => {
     const { symbol, interval } = req.body;
     const result = await client.get(`${symbol.toLowerCase()}_full_analizer_${interval}`);
     res.send(result);
 });
 
-app.post('/api/v3/current_analizer', async (req, res) => {
+app.post('/api/v4/current_analizer', async (req, res) => {
     const { symbol, interval } = req.body;
     const result = await client.get(`${symbol.toLowerCase()}_current_analizer_${interval}`);
     res.send(result);
 });
 
-app.post('/api/v3/current_candle', async (req, res) => {
+app.post('/api/v4/current_candle', async (req, res) => {
     const { symbol, interval } = req.body;
     const result = await client.get(`${symbol.toLowerCase()}_current_${interval}`);
     res.send(result);
 });
 
-app.get('/api/v3/btcbusd', async (req, res) => {
+app.get('/api/v4/btcbusd', async (req, res) => {
     const symbol = 'BTCBUSD'
     const interval = '15m'
     const limit = 60

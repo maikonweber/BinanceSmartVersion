@@ -1,28 +1,10 @@
 const axios = require('axios');
-
-
-
-async function callApi () {
-   return axios({
-        method : 'post',
-        url : 'https://api.muttercorp.online/api/v4/full_candle',
-        responseType : 'json',
-        headers : {
-            token : ""
-        },
-        body: {
-         "symbol" : "BTCBUSD",
-         "interval" : "1h"
-        }
-    }).then(el => {
-       return el
-    })
-}
+const Redis = require('ioredis');
+const l = require('./console.js');
 
 
 ;(async () => {
-   const result = await callApi();
-   console.log(result);
-
-
+   const full_candle = await client.get(`${symbol.toUpperCase()}_candle_${interval}`);
+   console.log(full_candle);
+   
 })()

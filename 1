@@ -1,0 +1,13 @@
+const axios = require('axios');
+const Redis = require('ioredis');
+const l = require('./console.js');
+const client = new Redis();
+const symbol = 'BTCBUSD';787777878877
+const interval = '1h';
+
+
+;(async () => {
+   const full_candle = await client.get(`${symbol.toUpperCase()}_candle_${interval}`);
+ 	console.log(full_candle);  
+   
+})()

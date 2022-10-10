@@ -1,4 +1,4 @@
-
+const registerEnter = require('./db')
 class decicionObject {
     constructor(oneDes, twoDes, thDes) {
         let oneDes = oneDes;
@@ -16,6 +16,8 @@ class decicionObject {
             console.log('Inicializando uma Ordem'); 
         }
     }
+
+    procces
 }
 
 module.exports = decicionObject
@@ -23,6 +25,14 @@ module.exports = decicionObject
 /* 
     * Objecto tem um interface que recebe 3 valores para executar um ordem
     * Armazena a ordem até ela ser executada.
-    * Define o Stop o Meta e Valor de Saida.
-    * Finaliza a Operação
+    * Define o 
+    * S
+    * 
+    * */
+
+/*
+    *    
+
+
+
 */

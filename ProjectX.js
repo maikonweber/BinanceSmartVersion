@@ -6,10 +6,6 @@ const client = new Redis();
 const symbol = 'BTCBUSD';
 const interval = '1h';
 const tickInterval = 5000;
-const decicionObject = require(('./decicionObject'))
-
-
-
 
 
 setInterval(async () => {

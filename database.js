@@ -6,6 +6,7 @@ const crypto = require('crypto')
 var pg = require('pg');
 
 
+
 let client = {
     host: 'localhost',
     port: 5532,
@@ -18,6 +19,14 @@ let client = {
 let pool = new pg.Pool(client);
 
 
+
+async function registerEnter () {
+    const date_ = new Date(date).getTime()
+    console.log(date_);
+    let sqlString = `
+        INSERT INTO 
+    `   
+}
 
 
 async function insertCrash_ (date, number) {

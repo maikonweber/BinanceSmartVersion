@@ -37,3 +37,9 @@ CREATE TABLE post (
     img JSON
 );
 
+
+CREATE TABLE registerOrder 
+(
+ id SERIAL PRIMARY KEY
+ values 
+)

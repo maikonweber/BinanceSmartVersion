@@ -1,15 +1,16 @@
 const axios = require('axios');
 const Redis = require('ioredis');
 const l = require('./console.js');
-const decicionObject = require('./decicionObject.js');
+
+// const decicionObject = require('./decicionObject.js');
 const client = new Redis();
 const symbol = 'BTCBUSD';
 const interval = '1h';
-const tickInterval = 5000;
+const tickInterval = 15000;
 
 
 setInterval(async () => {
-   const decicionObject = new decicionObject(false, false, false);
+   // const decicionObject = new decicionObject(false, false, false);
    console.log('Analisando o Mercado para uma possível movimentação')
    let result = await client.get(`${symbol.toLowerCase()}_full_analizer_${interval}`);
    result = JSON.parse(result);

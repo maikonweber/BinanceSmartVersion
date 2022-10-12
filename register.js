@@ -59,7 +59,6 @@ async function callSpot(position, valor, quantity, id) {
 
      },
      "Down" : async () => {
-
      }
    } 
    return 
@@ -69,11 +68,18 @@ async function callSpot(position, valor, quantity, id) {
 const objectDecision = {
    "Spot": async (position, valor, quantity, id) => {
       await insertRegisterSpot(position, valor, quantity, id)
+      await callSpot(position, valor, quantity, id);
    },
    "Future": async (position, valor, quantity, id) => {
       await insertRegisterFuture(position, valor, quantity, id)
+      await callFuture(position, valor, quantity, id)
    }
 }
+
+module.exports = {
+   objectDecision
+}
+
 
 
 

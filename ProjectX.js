@@ -9,6 +9,7 @@ const interval = '1h';
 const tickInterval = 15000;
 
 
+
 setInterval(async () => {
    // const decicionObject = new decicionObject(false, false, false);
    console.log('Analisando o Mercado para uma possível movimentação')

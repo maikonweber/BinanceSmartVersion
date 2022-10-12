@@ -1,23 +1,18 @@
 const registerEnter = require('./db')
+const 
 class decicionObject {
-    constructor(oneDes, twoDes, thDes) {
-        let oneDes = oneDes;
-        let twoDes = twoDes;
-        let thDes = thDes;
-        let call;
-
-    }
-    setCall(call) {
-        this.call = call
+    constructor(decicionOne, decicionTwo, decicionThree) {
+        let one = decicionOne;
+        let two = decicionTwo;
+        let three = decicionThree;
     }
     
     putOrder({decisionMMA10, relMMA10MMA20, volume}) {
         if(this.oneDes && this.twoDes && thDes) {
             console.log('Inicializando uma Ordem'); 
+        
         }
     }
-
-    procces
 }
 
 module.exports = decicionObject

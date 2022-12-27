@@ -9,12 +9,11 @@ const apiSecret = process.env.API_SECRET;
 const Api_url = process.env.API_URL;
 console.log(process.env)
 
+
 const roundToTwo = num => +(Math.round(num + "e+2")  + "e-2");
 
 console.log(apiKey, apiSecret, Api_url);
-
      
-
 async function privateCall(path, data = {}, method = 'GET') {
     const timestamp = moment().valueOf();
     const signature = crypto.createHmac('sha256', apiSecret)

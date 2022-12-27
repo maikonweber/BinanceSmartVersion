@@ -8,10 +8,14 @@ Create Table openOrder (
     timeStamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT into users 
-(first_name, last_name, email, password) 
-values ('maikonweber', 'ma128sio4', 'maikonweber@gmail.com.br', 'ma128sio4');
-
+Create Table users (
+    id Serial PRIMARY KEY,
+    first_name VARCHAR(200) not null,
+    hash_pass text not null,
+    sal text not null,
+    created_at timeStamp DEFAULT NOW(),
+    email VARCHAR(200) not null
+    );
 
 CREATE TABLE users_token (
     users_id integer REFERENCES users(id),
@@ -37,9 +41,3 @@ CREATE TABLE post (
     img JSON
 );
 
-
-CREATE TABLE registerOrder 
-(
- id SERIAL PRIMARY KEY
- values 
-)

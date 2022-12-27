@@ -19,7 +19,6 @@ const multer = Multer({
 
 
 
-
 let projectId = 'teste-332301 '
 let keyFilename = './key.json'
 
@@ -82,8 +81,6 @@ app.get('/api/*', async (req, res, next) => {
     console.log(result)
     }    
     next();
-    
-    
 });
 
 
@@ -213,78 +210,6 @@ app.post('/api/accept_cookie', async (req, res) => {
   
 })
 
-// Roullete Evolution
-
-
-app.post('/api/evolution', async (req, res) => {
-    const body = req.body;
-    const {name, data} = body;  // console.log(name, number)
-    let name_ = name.replace(/\s/g, '_');
-    const result = await getLastNumberEv(name_) 
-    console.log(result)
-    
-    if (!result) {
-      console.log('--insert--')
-      const insertResult = await InsertRoulleteEv(name_, data)
-      return res.send('This number insert')
-    }
-  
-    if(JSON.stringify(result) != JSON.stringify(data)) {
-        console.log('Here her this shit')
-        const insertResult = await InsertRoulleteEv(name_, data)
-        return res.send('This Number Insert')
-        }
-        res.send('This Number Already Insert')
-  })
-
-  app.post('/api/cards_', async (req, res) => {
-    const body = req.body
-    let { number , name } = body  
-    let name_ = name.replace(/\s/g, '_');
-    // res.send(result).status(200)
-    
-    const result = await redis.get(`${name_}_${number}`)
-    if(!result){
-      await redis.set(`${name_}_${number}`, 'true', 'EX', '60')
-      const objg = await insertCardPayload(name_, number)  
-  
-    } 
-    res.send(result).status(200)
-    
-  })
-  
-
-  
-
-app.post('/api/football/table', async (req, res) => {
-    console.log(req.body)
-  })
-  
-  app.post('/api/football/incoming', async (req, res) => {
-    console.log(req.body) 
-  })
-  
-  app.post('/api/football/statisct', async (req, res) => {
-    console.log(req.body)
-    
-    })
-    
-    
-  app.post('/api/football/best-player-time', async (req, res) => {
-    console.log(req.body)
-  })
-  
-  app.post('/api/football/time-incoming', async (req, res) => {
-    console.log(req.body)
-    
-  })
-   
-  app.post('/api/football/best-player-tating', async (req, res) => {
-    console.log(req.body)
-    
-  })
-// API Binance 
-
 
 app.get('/api',  async (req, res) => {   
     const symbol = 'BTCBUSD'
@@ -313,7 +238,7 @@ app.post('/api/v4/current_analizer', async (req, res) => {
 
 app.post('/api/v4/current_candle', async (req, res) => {
     const { symbol, interval } = req.body;
-    const result = await client.get(`${symbol.toLowerCase()}_current_${interval}`);
+    const result = await client.get(`${symbol.toLowerCase()}_current_analizer_${interval}`);
     res.send(result);
 });
 
@@ -369,9 +294,6 @@ app.post("/api/v2/createus", async (req, res) => {
     let result = await createUsers(email, password, name, username, phone, address);
     res.send(result);
   })
-
-app.post('api')
-
 
 app.listen(port, () => {
 console.log('App Express is Running, '  + port);

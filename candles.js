@@ -1,8 +1,6 @@
-const api = require('./api');
+const api = require('./api')
 const moment = require('moment');//
 const tulind = require('tulind');
-
-
 
 
 // Get max and min of the candles

@@ -269,7 +269,6 @@ class Robot {
             }
 
             await this.redis.set(`${this.symbol.toLowerCase()}_full_analizer_${this.time}`, JSON.stringify(allProprieties));
-        
             await this.delay(5000);
         }
     }
@@ -287,6 +286,7 @@ class Robot {
               if (data) {
                   const trade = JSON.parse(data);
                   const btc = {
+                    
                       symbol: trade.s,
                       time: moment(trade.k.t).format('YYYY-MM-DD HH:mm:ss'),
                       open: trade.k.o,

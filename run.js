@@ -12,7 +12,6 @@ const { verifyLastOrder } = require('./db.js');
 const { sendTelegram } = require('./telegram.js');
 
 
-
 class Robot {
     constructor(amount, syngal, time, interval) {
         // Order information

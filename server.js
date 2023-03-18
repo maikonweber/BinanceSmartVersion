@@ -17,8 +17,6 @@ const multer = Multer({
     }
 })
 
-
-
 let projectId = 'teste-332301 '
 let keyFilename = './key.json'
 
@@ -26,6 +24,7 @@ const storage = new Storage({
     projectId,
     keyFilename
 })
+
 const buckted = storage.bucket('buckted')
 
 const {
@@ -52,14 +51,6 @@ const {
 } = require('./db')
 
 const {  kline, newOCO, futureOrder  }= require('./api.js')
-
-const Robot = require('./RedisRobot');
-
-const app3 = new Robot('BTCBUSD', '1h', 30);
-const app2 = new Robot('BTCBUSD', '15m', 30);
-
-app3.Init()
-app2.Init()
 
 const cors = require('cors');
 const port = 3054
@@ -295,8 +286,11 @@ app.post("/api/v2/createus", async (req, res) => {
     res.send(result);
   })
 
+
 app.listen(port, () => {
 console.log('App Express is Running, '  + port);
 })
+
+
 
 appWs(app)

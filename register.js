@@ -2,8 +2,6 @@ var { Pool, Client } = require("pg");
 const hasher = require('./hasher')
 const crypto = require('crypto');
 
-
-
 var client = new Pool({
    user: "binance",
    password: "binance",
@@ -29,7 +27,6 @@ INSERT INTO spotRegister(
 VALUES (
    $1, $2, $3, $4
 );
-
 `
 
 async function insertRegisterSpot(position, valor, quantity, id) {

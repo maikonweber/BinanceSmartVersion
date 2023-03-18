@@ -2,18 +2,14 @@ const TelegramBot = require('node-telegram-bot-api');
 const { mod } = require('telegram/Helpers');
 
 // replace the value below with the Telegram token you receive from @BotFather
-const token = '5189315995:AAF7Ei5ozq6kHLSZTWHS_Xjy0ku-u-cxmfc';
+const token = process.env.telegram_bot;
 
 // Create a bot that uses 'polling' to fetch new updates
 const bot = new TelegramBot(token, {polling: false});
 
-
-// comente 
-
 async function sendTelegram (msg) {
     console.log("Enviando mensagem a Telegram");
     bot.sendMessage(1830205937, msg);
-    
 }
 
 
